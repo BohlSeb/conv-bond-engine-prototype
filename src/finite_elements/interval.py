@@ -1,10 +1,9 @@
 from __future__ import annotations
 
 import math
-from typing import TypeVar, TYPE_CHECKING
+from typing import TypeVar
 
 import numpy as np
-import QuantLib as ql
 
 
 def bisect_direction_impl(grid: list[float], a: float, b: float, left: bool) -> tuple[float, float]:
@@ -44,20 +43,21 @@ def bisect_outer_intervals(a: float, b: float, min_step: float, max_step: float)
     return sorted(grid)
 
 
-KnotKeyT = TypeVar('KnotKeyT')
+KeyT = TypeVar('KeyT')
 
 
-class BisectingGridFiller:
+class IntervalsBisectFill:
 
-    def __init__(self, knots: dict[KnotKeyT, float], min_step: float, max_step: float):
+    def __init__(self, knots: dict[KeyT, float], min_step: float, max_step: float):
         assert len(knots) > 1, 'At least two grid points are needed'
 
-        # Knot position indices in the final grid
-        self._indexes: dict[KnotKeyT, int] = {}
+        # Knot position indices within the final grid
+        self._indexes: dict[KeyT, int] = {}
 
         j = 0
         keys = [key for key, _ in sorted(knots.items(), key=lambda x: x[1])]
         knots = [knots[key] for key in keys]
+        self._indexes[keys[0]] = j
 
         grid = [knots[0]]
         for i in range(len(knots) - 1):
@@ -70,36 +70,11 @@ class BisectingGridFiller:
 
             j += 1
             grid.append(b)
-            self._indexes[keys[i]] = j
+            self._indexes[keys[i + 1]] = j
         self._grid = sorted(grid)
 
-    def indexes(self) -> dict[KnotKeyT, int]:
+    def indexes(self) -> dict[KeyT, int]:
         return self._indexes
 
     def grid(self) -> list[float]:
         return self._grid
-
-
-if __name__ == "__main__":
-    # times = [0.0, 0.5, 2.0]
-    # avg_step = 1
-    # max_step = 1 / 6
-    # alpha = 0.001
-    #
-    # test = MinDistanceMesher(times, avg_step, max_step, alpha)
-    # print(test.grid())
-    #
-    from matplotlib import pyplot as plt
-
-    # t_1, t_2 = 0.0, 0.5
-    # test = bisect_outer_intervals(t_1, t_2, min_step=0.5 / 365, max_step=0.1)
-    # print(test)
-
-    _times = {0: 0.0, 1: 1.0}
-    gen = BisectingGridFiller(_times, min_step=0.01, max_step=0.2)
-    y = [1.0] * len(gen.grid())
-    print(gen.grid())
-
-    plt.plot(gen.grid(), y, '|')
-    plt.grid(True)
-    plt.show()
