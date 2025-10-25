@@ -1,4 +1,4 @@
-# Finite Element Linear Triangular Assembler
+# Linear Triangular Element Assembler
 
 Small Python library implementing simple finite-element building blocks for linear triangular elements on rectangular meshes:
 - mesh generation (`src/finite_elements/triangulation.py`)
