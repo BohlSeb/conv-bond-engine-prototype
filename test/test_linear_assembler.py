@@ -44,7 +44,7 @@ class LinearTriangularFETest(unittest.TestCase):
         assembler = FEMAssembler(elements)
         lhs_a = assembler.assemble_mass()
 
-        result = integrand @ lhs_a @ np.ones_like(integrand)
+        result = integrand @ lhs_a @ integrand
         self.assertAlmostEqual(float(result), area)
 
     def test_mass_linear_exact_regular(self) -> None:
@@ -126,7 +126,7 @@ class LinearTriangularFETest(unittest.TestCase):
         result = integrand @ lhs_k @ integrand
         self.assertAlmostEqual(float(result), integral)
 
-    def test_stiffness_times(self):
+    def test_stiffness_times(self) -> None:
         print('Testing stiffness assembler...')
 
         def f(x, y):
