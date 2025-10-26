@@ -7,18 +7,18 @@ import random
 import numpy as np
 
 from src.finite_elements.triangulation import RectangleMesher
-from src.finite_elements.elements import LinearTriangularElements
+from src.finite_elements.elements import LinearTriElements
 from src.finite_elements.assembler import FEMAssembler
 
 
 class LinearTriangularFETest(unittest.TestCase):
 
     @staticmethod
-    def setup_regular(n: int) -> LinearTriangularElements:
+    def setup_regular(n: int) -> LinearTriElements:
         x_vals = np.linspace(-1, 2, n)
         y_vals = np.linspace(-1.5, 1, n)
         tri = RectangleMesher(x_vals, y_vals)
-        elements = LinearTriangularElements(tri.points(), tri.triangles(), tri.areas())
+        elements = LinearTriElements(tri.points(), tri.triangles(), tri.areas())
         return elements
 
     @staticmethod
@@ -42,9 +42,9 @@ class LinearTriangularFETest(unittest.TestCase):
         area = 3.0 * 2.5
 
         assembler = FEMAssembler(elements)
-        lhs_a = assembler.assemble_mass()
+        lhs = assembler.assemble_mass().tocsr()
 
-        result = integrand @ lhs_a @ integrand
+        result = integrand @ lhs @ integrand
         self.assertAlmostEqual(float(result), area)
 
     def test_mass_linear_exact_regular(self) -> None:
@@ -53,22 +53,22 @@ class LinearTriangularFETest(unittest.TestCase):
         integral = 1.875
 
         assembler = FEMAssembler(elements)
-        lhs_a = assembler.assemble_mass()
+        lhs = assembler.assemble_mass().tocsr()
 
-        result = integrand @ lhs_a @ np.ones_like(integrand)
+        result = integrand @ lhs @ np.ones_like(integrand)
         self.assertAlmostEqual(float(result), integral)
 
     def test_mass_linear_exact_irregular(self) -> None:
         x_knots, y_knots = self.setup_irregular()
         tri = RectangleMesher(x_knots, y_knots)
-        elements = LinearTriangularElements(tri.points(), tri.triangles(), tri.areas())
+        elements = LinearTriElements(tri.points(), tri.triangles(), tri.areas())
         integrand = np.array([x[0] + x[1] for x in elements.points()])
         integral = 1331.64
 
         assembler = FEMAssembler(elements)
-        lhs_a = assembler.assemble_mass()
+        lhs = assembler.assemble_mass().tocsr()
 
-        result = integrand @ lhs_a @ np.ones_like(integrand)
+        result = integrand @ lhs @ np.ones_like(integrand)
         self.assertAlmostEqual(float(result), integral)
 
     def test_mass_times(self) -> None:
@@ -85,8 +85,8 @@ class LinearTriangularFETest(unittest.TestCase):
 
             start = timer()
             assembler = FEMAssembler(elements)
-            lhs_a = assembler.assemble_mass()
-            result = integrand @ lhs_a @ np.ones_like(integrand)
+            lhs = assembler.assemble_mass().tocsr()
+            result = integrand @ lhs @ np.ones_like(integrand)
             end = timer()
 
             print(f'Analytic={integral}, result={result}, n*m={n * n}, time={end - start}')
@@ -103,9 +103,9 @@ class LinearTriangularFETest(unittest.TestCase):
         integral = area * grad_norm_squared
 
         assembler = FEMAssembler(elements)
-        lhs_k = assembler.assemble_stiffness()
+        lhs = assembler.assemble_stiffness().tocsr()
 
-        result = integrand @ lhs_k @ integrand
+        result = integrand @ lhs @ integrand
         self.assertAlmostEqual(float(result), integral)
 
     def test_stiffness_exact_irregular(self) -> None:
@@ -114,16 +114,16 @@ class LinearTriangularFETest(unittest.TestCase):
 
         x_knots, y_knots = self.setup_irregular()
         tri = RectangleMesher(x_knots, y_knots)
-        elements = LinearTriangularElements(tri.points(), tri.triangles(), tri.areas())
+        elements = LinearTriElements(tri.points(), tri.triangles(), tri.areas())
         integrand = np.array([f(x[0], x[1]) for x in elements.points()])
         grad_norm_squared = 3 ** 2 + (-2) ** 2
         area = 8.0 * 13.7
         integral = area * grad_norm_squared
 
         assembler = FEMAssembler(elements)
-        lhs_k = assembler.assemble_stiffness()
+        lhs = assembler.assemble_stiffness().tocsr()
 
-        result = integrand @ lhs_k @ integrand
+        result = integrand @ lhs @ integrand
         self.assertAlmostEqual(float(result), integral)
 
     def test_stiffness_times(self) -> None:
@@ -140,7 +140,30 @@ class LinearTriangularFETest(unittest.TestCase):
 
             start = timer()
             assembler = FEMAssembler(elements)
-            lhs_a = assembler.assemble_stiffness()
-            result = integrand @ lhs_a @ integrand
+            lhs = assembler.assemble_stiffness().tocsr()
+            result = integrand @ lhs @ integrand
             end = timer()
             print(f'Analytic={integral}, result={result}, n*m={n * n}, time={end - start}')
+
+    def test_mass_and_stiffness(self) -> None:
+        def f(x, y):
+            return 3 * x - 2 * y + 1
+
+        x_knots, y_knots = self.setup_irregular()
+        tri = RectangleMesher(x_knots, y_knots)
+        elements = LinearTriElements(tri.points(), tri.triangles(), tri.areas())
+        integrand = np.array([f(x[0], x[1]) for x in elements.points()])
+
+        grad_norm_squared = 3 ** 2 + (-2) ** 2
+        area = 8.0 * 13.7
+        integral_grad_squared = area * grad_norm_squared
+        integral_f_squared = 19668.1
+        integral = integral_f_squared + integral_grad_squared
+
+        assembler = FEMAssembler(elements)
+        lhs_m = assembler.assemble_mass().tocsr()
+        lhs_s = assembler.assemble_stiffness().tocsr()
+
+        result = integrand @ lhs_m @ integrand + integrand @ lhs_s @ integrand
+        err = float(abs(result - integral) / integral)
+        self.assertLess(err, 1e-6)  # error too big?

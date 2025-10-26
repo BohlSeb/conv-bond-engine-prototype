@@ -4,6 +4,10 @@ import numpy as np
 from numpy.typing import NDArray, ArrayLike
 
 
+# Bad rectangle mesher
+# Concentrates around provided knots but not in a good way (adaptive),
+# leading to small triangle angles
+
 class RectangleMesher:
 
     def __init__(self, x_knots: ArrayLike, y_knots: ArrayLike) -> None:

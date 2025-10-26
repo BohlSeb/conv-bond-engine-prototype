@@ -6,6 +6,9 @@ from typing import TypeVar
 import numpy as np
 
 
+# Sketchy implementation of crude concentrating bisection around the provided knots on a 1D interval
+
+
 def bisect_direction_impl(grid: list[float], a: float, b: float, left: bool) -> tuple[float, float]:
     mid = (a + b) / 2
     if mid in grid:
