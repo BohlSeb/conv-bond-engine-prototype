@@ -53,7 +53,7 @@ class LinearTriElements(TriangleElements):
         b = self._b[tri_index]
         c = self._c[tri_index]
         a = self._areas[tri_index]
-        return weight / (4 * a) * np.outer(b, b) + np.outer(c, c)
+        return weight / (4 * a) * (np.outer(b, b) + np.outer(c, c))
 
     def mass(self, tri_index: int, weight: float = 1.0) -> NDArray[np.float64]:
         a = self._areas[tri_index]
