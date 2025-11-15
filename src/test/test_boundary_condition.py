@@ -6,14 +6,14 @@ import numpy as np
 
 from finite_elements.boundary import ConstRobinBC
 from finite_elements.functions import Scalar, Constant
-from src.finite_elements.triangulation import DelaunayMesh2D
-from src.finite_elements.elements import LinearTriElements
-from src.finite_elements.assembler import FEMAssembler
-from src.finite_elements.boundary import RectangleHelper, ConstStrongDirichletBC, ConstNeumannBC
+from finite_elements.triangulation import DelaunayMesh2D
+from finite_elements.elements import LinearTriElements
+from finite_elements.assembler import FEMAssembler
+from finite_elements.boundary import RectangleHelper, ConstStrongDirichletBC, ConstNeumannBC
 
-from utils import plot_solution
+from test.utils import plot_solution
 
-PLOT = True
+PLOT = False
 
 
 def test_condition_linear(x: np.ndarray, y: np.ndarray) -> np.ndarray:
@@ -60,7 +60,7 @@ class BoundaryConditionTest(unittest.TestCase):
         linear_condition.apply(lhs_f, rhs_f)
         u_approx_f = np.linalg.solve(lhs_f.toarray(), rhs_f)
         if PLOT:
-            plot_solution(elements, u_approx_f, "laplace u = 10 with trig Dirichlet BC")
+            plot_solution(elements, u_approx_f, "laplace u = 10 with trig. Dirichlet BC")
 
     def test_poisson_trigonometric(self) -> None:
         elements = self._elements
@@ -68,14 +68,14 @@ class BoundaryConditionTest(unittest.TestCase):
         x = elements.points()[:, 0]
         y = elements.points()[:, 1]
         f = 2 * np.pi ** 2 * (np.sin(np.pi * x) - np.cos(np.pi * y))
-        trig_condition = ConstStrongDirichletBC(helper.boundary(), elements.points(), Scalar(lambda x, y: x + y))
+        trig_condition = ConstStrongDirichletBC(helper.boundary(), elements.points(), Scalar(lambda _x, _y: _x + _y))
         assembler = FEMAssembler(elements)
         lhs_f = assembler.assemble_stiffness()
         rhs_f = assembler.assemble_mass().toarray() @ f
         trig_condition.apply(lhs_f, rhs_f)
         u_approx_f = np.linalg.solve(lhs_f.toarray(), rhs_f)
         if PLOT:
-            plot_solution(elements, u_approx_f, "laplace u = trig with trig Dirichlet BC")
+            plot_solution(elements, u_approx_f, "laplace u = trigonometric f with linear Dirichlet BC")
 
     def test_laplace_neumann(self) -> None:
         elements = self._elements
@@ -99,6 +99,7 @@ class BoundaryConditionTest(unittest.TestCase):
         elements = self._elements
         assembler = FEMAssembler(elements)
         lhs = assembler.assemble_stiffness()
+
         lhs_robin = assembler.assemble_stiffness()
         rhs = np.zeros(elements.points().shape[0])
         rhs_robin = np.zeros(elements.points().shape[0])
