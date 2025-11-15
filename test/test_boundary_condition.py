@@ -4,14 +4,16 @@ import unittest
 
 import numpy as np
 
-import matplotlib.pyplot as plt
-import matplotlib.tri as mtri
-
-from finite_elements.boundary import ConstNeumannCondition
-from src.finite_elements.triangulation import RectangleMesher
+from finite_elements.boundary import ConstRobinBC
+from finite_elements.functions import Scalar, Constant
+from src.finite_elements.triangulation import DelaunayMesh2D
 from src.finite_elements.elements import LinearTriElements
 from src.finite_elements.assembler import FEMAssembler
-from src.finite_elements.boundary import RectangleHelper, XYCallBack, ConstDirichletCondition
+from src.finite_elements.boundary import RectangleHelper, ConstStrongDirichletBC, ConstNeumannBC
+
+from utils import plot_solution
+
+PLOT = True
 
 
 def test_condition_linear(x: np.ndarray, y: np.ndarray) -> np.ndarray:
@@ -22,101 +24,94 @@ def test_condition_trig(x: np.ndarray, y: np.ndarray) -> np.ndarray:
     return np.sin(np.pi * x) - np.cos(np.pi * y)
 
 
-def test_linear_flux_ymin(x: np.ndarray, y: np.ndarray) -> np.ndarray:
-    return -1 * np.ones_like(x)
-
-
-class DirichletConditionTest(unittest.TestCase):
+class BoundaryConditionTest(unittest.TestCase):
 
     def setUp(self):
-        x = np.linspace(0, 1, 30)
-        y = np.linspace(0, 1, 30)
-        tri = RectangleMesher(x, y)
+        # i_x = ConcentratingInterval(-1.0, 1.0, 40, 0.5, 0.1)
+        i_x = np.linspace(-1.0, 1.0, 20)
+        tri = DelaunayMesh2D(i_x, i_x)
         self._elements = LinearTriElements(tri.points(), tri.triangles(), tri.areas())
 
-    @staticmethod
-    def plot_solution(elements: LinearTriElements, u: np.ndarray, title: str = "FEM Solution") -> None:
-        """
-        Plot a solution vector u on the triangular mesh defined by LinearTriElements.
-        """
-        points = elements.points()
-        triangles = elements.triangles()
-
-        x = points[:, 0]
-        y = points[:, 1]
-
-        # create triangulation
-        triang = mtri.Triangulation(x, y, triangles)
-
-        fig = plt.figure(figsize=(12, 10))
-        ax = fig.add_subplot(111, projection='3d')
-
-        # Plot surface
-        surf = ax.plot_trisurf(triang, u, cmap='viridis', edgecolor='k', linewidth=0.3, alpha=0.9)
-
-        fig.colorbar(surf, ax=ax, shrink=0.5, aspect=10, label='u')
-
-        ax.set_xlabel('x')
-        ax.set_ylabel('y')
-        ax.set_zlabel('u')
-        ax.set_title(title)
-        plt.show()
-
-    # most basic poisson equation
-    def test_zero_constant_laplace_with_dirichlet(self) -> None:
+    # most basic elliptic equation: \div \grad u = 0 with Dirichlet BC
+    # The linear function defined on the boundary is also the solution inside the domain
+    def test_laplace_dirichlet(self) -> None:
         elements = self._elements
-
         helper = RectangleHelper(elements.points())
-        linear_condition = ConstDirichletCondition(helper.boundary(), XYCallBack(test_condition_linear), elements.points())
-
+        linear_condition = ConstStrongDirichletBC(helper.boundary(), elements.points(), Scalar(lambda x, y: x + y))
         assembler = FEMAssembler(elements)
         lhs = assembler.assemble_stiffness()
-
-        # f = 0
         rhs = np.zeros(elements.points().shape[0])
-
         linear_condition.apply(lhs, rhs)
-
-        u_exact = np.linalg.solve(lhs.toarray(), rhs)
+        u = np.linalg.solve(lhs.toarray(), rhs)
         u_expected = test_condition_linear(elements.points()[:, 0], elements.points()[:, 1])
-        np.testing.assert_allclose(u_exact, u_expected, rtol=1e-12)
+        np.testing.assert_allclose(u, u_expected, atol=1e-14)
+        if PLOT:
+            plot_solution(elements, u, "laplace u = 0 with linear Dirichlet BC")
 
-        trig_condition = ConstDirichletCondition(helper.boundary(), XYCallBack(test_condition_trig), elements.points())
-        trig_condition.apply(lhs, rhs)
-        u_approx = np.linalg.solve(lhs.toarray(), rhs)
-
-        f = 0.05
-        rhs_f = f * np.ones(elements.points().shape[0])
-        trig_condition.apply(lhs, rhs_f)
-        u_approx_f = np.linalg.solve(lhs.toarray(), rhs_f)
-
-        plot = False
-        if plot:
-            self.plot_solution(elements, u_exact, title="FEM Solution laplace u = 0")
-            self.plot_solution(elements, u_approx, title="FEM Solution laplace u = 0")
-            self.plot_solution(elements, u_approx_f, title="FEM Solution laplace u = constant f")
-
-    # most basic poisson equation
-    def test_zero_constant_laplace_with_neumann(self) -> None:
+    def test_poisson_const(self) -> None:
         elements = self._elements
+        helper = RectangleHelper(elements.points())
+        f = 10 * np.ones(elements.points().shape[0])
+        linear_condition = ConstStrongDirichletBC(helper.boundary(), elements.points(),
+                                                  Scalar(lambda x, y: np.sin(np.pi * x) - np.cos(np.pi * y)))
+        assembler = FEMAssembler(elements)
+        lhs_f = assembler.assemble_stiffness()
+        rhs_f = assembler.assemble_mass().toarray() @ f
+        linear_condition.apply(lhs_f, rhs_f)
+        u_approx_f = np.linalg.solve(lhs_f.toarray(), rhs_f)
+        if PLOT:
+            plot_solution(elements, u_approx_f, "laplace u = 10 with trig Dirichlet BC")
+
+    def test_poisson_trigonometric(self) -> None:
+        elements = self._elements
+        helper = RectangleHelper(elements.points())
+        x = elements.points()[:, 0]
+        y = elements.points()[:, 1]
+        f = 2 * np.pi ** 2 * (np.sin(np.pi * x) - np.cos(np.pi * y))
+        trig_condition = ConstStrongDirichletBC(helper.boundary(), elements.points(), Scalar(lambda x, y: x + y))
+        assembler = FEMAssembler(elements)
+        lhs_f = assembler.assemble_stiffness()
+        rhs_f = assembler.assemble_mass().toarray() @ f
+        trig_condition.apply(lhs_f, rhs_f)
+        u_approx_f = np.linalg.solve(lhs_f.toarray(), rhs_f)
+        if PLOT:
+            plot_solution(elements, u_approx_f, "laplace u = trig with trig Dirichlet BC")
+
+    def test_laplace_neumann(self) -> None:
+        elements = self._elements
+        helper = RectangleHelper(elements.points())
+        dirichlet_1 = ConstStrongDirichletBC(helper.x_min(), elements.points(), Scalar(lambda x, y: x + y))
+        dirichlet_2 = ConstStrongDirichletBC(helper.x_max(), elements.points(), Scalar(lambda x, y: x + y))
+        dirichlet_3 = ConstStrongDirichletBC(helper.y_max(), elements.points(), Scalar(lambda x, y: x + y))
+        neumann = ConstNeumannBC(helper.y_min(), elements.points(), Constant(-1.0))
+        assembler = FEMAssembler(elements)
+        lhs = assembler.assemble_stiffness()
+        rhs = np.zeros(elements.points().shape[0])
+        neumann.apply(rhs)
+        dirichlet_1.apply(lhs, rhs)
+        dirichlet_2.apply(lhs, rhs)
+        dirichlet_3.apply(lhs, rhs)
+        u_approx = np.linalg.solve(lhs.toarray(), rhs)
+        if PLOT:
+            plot_solution(elements, u_approx, "laplace u = 0, with Neumann for x_min and linear Dirichlet elsewhere")
+
+    def test_robin_neumann_sanity(self) -> None:
+        elements = self._elements
+        assembler = FEMAssembler(elements)
+        lhs = assembler.assemble_stiffness()
+        lhs_robin = assembler.assemble_stiffness()
+        rhs = np.zeros(elements.points().shape[0])
+        rhs_robin = np.zeros(elements.points().shape[0])
 
         helper = RectangleHelper(elements.points())
 
-        dirichlet = ConstDirichletCondition(helper.x_min(), XYCallBack(test_condition_linear), elements.points())
-        neumann = ConstNeumannCondition(helper.y_min(), XYCallBack(test_linear_flux_ymin), elements.points())
+        boundaries = [b for b in [helper.x_min(), helper.x_max(), helper.y_min(), helper.y_max()]]
 
-        assembler = FEMAssembler(elements)
-        lhs = assembler.assemble_stiffness()
-
-        # f = 0
-        rhs = np.zeros(elements.points().shape[0])
-
-        neumann.apply(rhs)
-        dirichlet.apply(lhs, rhs)
-
-        u_approx = np.linalg.solve(lhs.toarray(), rhs)
-
-        plot = False
-        if plot:
-            self.plot_solution(elements, u_approx, title="FEM Solution poisson f = constant")
-
+        for i, b_points in enumerate(boundaries):
+            neumann = ConstNeumannBC(b_points, elements.points(), Constant(0.5))
+            robin = ConstRobinBC(b_points, elements.points(), Constant(0.5),
+                                 Constant(0.0), Constant(1.0))
+            neumann.apply(rhs)
+            robin.apply(lhs_robin, rhs_robin)
+        np.testing.assert_allclose(lhs.toarray(), lhs_robin.toarray(), atol=1e-14)
+        np.testing.assert_allclose(rhs, rhs_robin, atol=1e-14)

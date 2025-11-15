@@ -6,18 +6,18 @@ import random
 
 import numpy as np
 
-from src.finite_elements.triangulation import RectangleMesher
+from src.finite_elements.triangulation import DelaunayMesh2D
 from src.finite_elements.elements import LinearTriElements
 from src.finite_elements.assembler import FEMAssembler
 
 
-class LinearTriangularFETest(unittest.TestCase):
+class FEAssemblerTest(unittest.TestCase):
 
     @staticmethod
     def setup_regular(n: int) -> LinearTriElements:
         x_vals = np.linspace(-1, 2, n)
         y_vals = np.linspace(-1.5, 1, n)
-        tri = RectangleMesher(x_vals, y_vals)
+        tri = DelaunayMesh2D(x_vals, y_vals)
         elements = LinearTriElements(tri.points(), tri.triangles(), tri.areas())
         return elements
 
@@ -60,7 +60,7 @@ class LinearTriangularFETest(unittest.TestCase):
 
     def test_mass_linear_exact_irregular(self) -> None:
         x_knots, y_knots = self.setup_irregular()
-        tri = RectangleMesher(x_knots, y_knots)
+        tri = DelaunayMesh2D(x_knots, y_knots)
         elements = LinearTriElements(tri.points(), tri.triangles(), tri.areas())
         integrand = np.array([x[0] + x[1] for x in elements.points()])
         integral = 1331.64
@@ -113,7 +113,7 @@ class LinearTriangularFETest(unittest.TestCase):
             return 3 * x - 2 * y + 1
 
         x_knots, y_knots = self.setup_irregular()
-        tri = RectangleMesher(x_knots, y_knots)
+        tri = DelaunayMesh2D(x_knots, y_knots)
         elements = LinearTriElements(tri.points(), tri.triangles(), tri.areas())
         integrand = np.array([f(x[0], x[1]) for x in elements.points()])
         grad_norm_squared = 3 ** 2 + (-2) ** 2
@@ -150,7 +150,7 @@ class LinearTriangularFETest(unittest.TestCase):
             return 3 * x - 2 * y + 1
 
         x_knots, y_knots = self.setup_irregular()
-        tri = RectangleMesher(x_knots, y_knots)
+        tri = DelaunayMesh2D(x_knots, y_knots)
         elements = LinearTriElements(tri.points(), tri.triangles(), tri.areas())
         integrand = np.array([f(x[0], x[1]) for x in elements.points()])
 
@@ -166,4 +166,39 @@ class LinearTriangularFETest(unittest.TestCase):
 
         result = integrand @ lhs_m @ integrand + integrand @ lhs_s @ integrand
         err = float(abs(result - integral) / integral)
+        self.assertLess(err, 1e-6)  # error too big?
+
+    def test_convection(self) -> None:
+        # f(x,y) = 2*x^2 + 3*y^2 + 3
+        # beta = (w1, w2)
+        # Integrate <beta, grad(f)> dxdy over the domain
+        def _f(x, y):
+            return 2 * x * x + 3 * y * y + 3
+        beta = (-3.0, 1.3)
+
+        # wolfram alpha: integrate -3*4*x + 1.3*6*y dx dy, x=-1..2, y=-1.5..1
+        expected = -59.625
+        # integrate -3*4*x + 1.3*6*y dx dy, x=-1..7, y=2.3..16
+        expected_irregular = 3876.55
+
+        elements = self.setup_regular(17)
+        f = np.array([_f(x[0], x[1]) for x in elements.points()])
+        ones = np.ones_like(f)
+
+        assembler = FEMAssembler(elements)
+        lhs = assembler.assemble_convection(weight_x=lambda x, y: beta[0], weight_y=lambda x, y: beta[1]).tocsr()
+        f = np.array([_f(x[0], x[1]) for x in elements.points()])
+        result = ones @ lhs @ f
+        self.assertAlmostEqual(float(result), expected)
+
+        x_grid, y_grid = self.setup_irregular()
+        tri_irr = DelaunayMesh2D(x_grid, y_grid)
+        elements_irr = LinearTriElements(tri_irr.points(), tri_irr.triangles(), tri_irr.areas())
+        f_irr = np.array([_f(x[0], x[1]) for x in elements_irr.points()])
+        ones_irr = np.ones_like(f_irr)
+
+        assembler_irr = FEMAssembler(elements_irr)
+        lhs_irr = assembler_irr.assemble_convection(weight_x=lambda x, y: beta[0], weight_y=lambda x, y: beta[1]).tocsr()
+        result_irr = ones_irr @ lhs_irr @ f_irr
+        err = float(abs(result_irr - expected_irregular) / expected_irregular)
         self.assertLess(err, 1e-6)  # error too big?

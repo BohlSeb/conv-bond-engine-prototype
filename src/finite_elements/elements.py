@@ -22,10 +22,13 @@ class TriangleElements:
     def triangles(self) -> NDArray[np.int32]:
         return self._triangles
 
-    def local_stiffness(self, tri_index: int, weight: float = 1.0) -> NDArray[np.float64]:
+    def stiffness(self, tri_index: int, weight: float = 1.0) -> NDArray[np.float64]:
         raise NotImplementedError
 
-    def local_mass(self, tri_index: int, weight: float = 1.0) -> NDArray[np.float64]:
+    def mass(self, tri_index: int, weight: float = 1.0) -> NDArray[np.float64]:
+        raise NotImplementedError
+
+    def convection(self, tri_index: int, weight_x: float = 1.0, weight_y: float = 1.0) -> NDArray[np.float64]:
         raise NotImplementedError
 
 
@@ -42,27 +45,21 @@ class LinearTriElements(TriangleElements):
         y1 = points[triangles[:, 1], 1]
         y2 = points[triangles[:, 2], 1]
 
+        # "shape"-function gradient coefficients
         self._b = np.stack([y1 - y2, y2 - y0, y0 - y1], axis=1)
         self._c = np.stack([x2 - x1, x0 - x2, x1 - x0], axis=1)
 
-    def local_stiffness(self, tri_index: int, weight: float = 1.0) -> NDArray[np.float64]:
+    def stiffness(self, tri_index: int, weight: float = 1.0) -> NDArray[np.float64]:
         b = self._b[tri_index]
         c = self._c[tri_index]
         a = self._areas[tri_index]
-        return weight * (np.outer(b, b) + np.outer(c, c)) / (4 * a)
+        return weight / (4 * a) * np.outer(b, b) + np.outer(c, c)
 
-    def local_mass(self, tri_index: int, weight: float = 1.0) -> NDArray[np.float64]:
+    def mass(self, tri_index: int, weight: float = 1.0) -> NDArray[np.float64]:
         a = self._areas[tri_index]
-        return weight * a / 12.0 * np.array([[2, 1, 1], [1, 2, 1], [1, 1, 2]])
+        return weight * a / 12 * np.array([[2, 1, 1], [1, 2, 1], [1, 1, 2]])
 
-    def local_convection(self, tri_index: int, vx: float, vy: float) -> NDArray[np.float64]:
-        """
-        Local convection matrix for triangle tri_index with constant velocity (vx, vy).
-        Approximates integral of phi_i * (vx * dphi_j/dx + vy * dphi_j/dy) using centroid.
-        """
-        b = self._b[tri_index]  # derivative coefficients
+    def convection(self, tri_index: int, weight_x: float = 1.0, weight_y: float = 1.0) -> NDArray[np.float64]:
+        b = self._b[tri_index]
         c = self._c[tri_index]
-        a = self._areas[tri_index]
-
-        # Shape function phi_i approximated as 1/3 over triangle
-        return (a / 6.0) * (np.outer(np.ones(3), vx * b + vy * c) / (2 * a))
+        return 1 / 6.0 * np.outer(np.ones(3), weight_x * b + weight_y * c)

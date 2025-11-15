@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 import math
+
 from typing import TypeVar
 
 import numpy as np
+import QuantLib as ql
 
 
 # Sketchy implementation of crude concentrating bisection around the provided knots on a 1D interval
@@ -51,11 +53,11 @@ KeyT = TypeVar('KeyT')
 
 class IntervalsBisectFill:
 
-    def __init__(self, knots: dict[KeyT, float], min_step: float, max_step: float):
+    def __init__(self, knots: dict[int, float], min_step: float, max_step: float):
         assert len(knots) > 1, 'At least two grid points are needed'
 
         # Knot position indices within the final grid
-        self._indexes: dict[KeyT, int] = {}
+        self._indexes: dict[int, int] = {}
 
         j = 0
         keys = [key for key, _ in sorted(knots.items(), key=lambda x: x[1])]
@@ -76,8 +78,45 @@ class IntervalsBisectFill:
             self._indexes[keys[i + 1]] = j
         self._grid = sorted(grid)
 
-    def indexes(self) -> dict[KeyT, int]:
+    def indexes(self) -> dict[int, int]:
         return self._indexes
 
     def grid(self) -> list[float]:
         return self._grid
+
+
+class ConcentratingInterval:
+
+    def __init__(self,
+                 start: float,
+                 end: float,
+                 size: int,
+                 point: float,
+                 beta: float,
+                 require_point: bool = False) -> None:
+        intervals = ql.Concentrating1dMesher(start, end, size, (point, beta), require_point)
+        self._grid = np.array(intervals.locations())
+        if not require_point:
+            self._indexes = None
+        else:
+            i = None
+            for i in range(len(self._grid)):
+                if math.isclose(self._grid[i], point):
+                    self._indexes = {i: i}
+                    break
+            if i is None:
+                raise Exception('Point not found in grid')
+
+    def grid(self) -> np.ndarray:
+        return self._grid
+
+    def indexes(self) -> dict[int, int]:
+        if self._indexes is not None:
+            return self._indexes
+        else:
+            raise Exception('No indexes available, grid was not required to contain a specific point')
+
+
+if __name__ == '__main__':
+    interval = ConcentratingInterval(0.0, 10.0, 9, 5.0, 0.5)
+    print(interval.grid())
