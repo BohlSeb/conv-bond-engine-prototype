@@ -6,9 +6,9 @@ import random
 
 import numpy as np
 
-from src.finite_elements.triangulation import DelaunayMesh2D
-from src.finite_elements.elements import LinearTriElements
-from src.finite_elements.assembler import FEMAssembler
+from finite_elements.triangulation import DelaunayMesh2D
+from finite_elements.elements import LinearTriElements
+from finite_elements.assembler import FEMAssembler
 
 
 class FEAssemblerTest(unittest.TestCase):
@@ -55,7 +55,7 @@ class FEAssemblerTest(unittest.TestCase):
         assembler = FEMAssembler(elements)
         lhs = assembler.assemble_mass().tocsr()
 
-        result = integrand @ lhs @ np.ones_like(integrand)
+        result = np.ones_like(integrand) @ lhs @ integrand
         self.assertAlmostEqual(float(result), integral)
 
     def test_mass_linear_exact_irregular(self) -> None:
@@ -68,7 +68,7 @@ class FEAssemblerTest(unittest.TestCase):
         assembler = FEMAssembler(elements)
         lhs = assembler.assemble_mass().tocsr()
 
-        result = integrand @ lhs @ np.ones_like(integrand)
+        result = np.ones_like(integrand) @ lhs @ integrand
         self.assertAlmostEqual(float(result), integral)
 
     def test_mass_times(self) -> None:
@@ -174,6 +174,7 @@ class FEAssemblerTest(unittest.TestCase):
         # Integrate <beta, grad(f)> dxdy over the domain
         def _f(x, y):
             return 2 * x * x + 3 * y * y + 3
+
         beta = (-3.0, 1.3)
 
         # wolfram alpha: integrate -3*4*x + 1.3*6*y dx dy, x=-1..2, y=-1.5..1
@@ -198,7 +199,8 @@ class FEAssemblerTest(unittest.TestCase):
         ones_irr = np.ones_like(f_irr)
 
         assembler_irr = FEMAssembler(elements_irr)
-        lhs_irr = assembler_irr.assemble_convection(weight_x=lambda x, y: beta[0], weight_y=lambda x, y: beta[1]).tocsr()
+        lhs_irr = assembler_irr.assemble_convection(weight_x=lambda x, y: beta[0],
+                                                    weight_y=lambda x, y: beta[1]).tocsr()
         result_irr = ones_irr @ lhs_irr @ f_irr
         err = float(abs(result_irr - expected_irregular) / expected_irregular)
         self.assertLess(err, 1e-6)  # error too big?

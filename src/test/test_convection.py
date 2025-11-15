@@ -11,23 +11,23 @@ from finite_elements.elements import LinearTriElements
 from finite_elements.assembler import FEMAssembler
 from finite_elements.boundary import RectangleHelper, ConstStrongDirichletBC, ConstRobinBC
 
-from utils import plot_solution
+from test.utils import plot_solution
 
-PLOT = True
+PLOT = False
 
 
 class TestConvection(unittest.TestCase):
 
     def test_convection(self):
-        for kappa in [0.3, 0.1, 0.01, 0.001]:
+        for kappa in [0.3, 0.1, 0.01, 0.001, 0.0001]:
             self._run_Jay_Gopalakrishnan_Con_fusion(kappa, False, False)
 
     def test_convection_weak_dirichlet(self):
-        for kappa in [0.3, 0.1, 0.01, 0.001]:
+        for kappa in [0.3, 0.1, 0.01, 0.001, 0.0001]:
             self._run_Jay_Gopalakrishnan_Con_fusion(kappa, True, False)
 
     def test_convection_concentrating(self):
-        for kappa in [0.3, 0.1, 0.01, 0.001]:
+        for kappa in [0.3, 0.1, 0.01, 0.001, 0.0001]:
             self._run_Jay_Gopalakrishnan_Con_fusion(kappa, False, True)
 
     @staticmethod
@@ -92,7 +92,7 @@ class TestConvection(unittest.TestCase):
             plot_solution(elements, u_approx,
                           title=fr"FEM Solution of Jay's Con-fusion Problem: $\kappa$ = {kappa}" + f'\n{weak_dirichlet = }, {concentrating = }')
 
-            x_plt = np.linspace(0.0, 1.0, 1000)
+            x_plt = np.linspace(0.0, 1.0, 100)
             u = (1 - np.exp((x_plt - 1) / kappa)) / (1 - np.exp(-1 / kappa)) / 2
             plt.plot(x_plt, u)
             u_x = ql.LinearInterpolation(x.tolist(), u_approx[b_help.y_min()].tolist())
