@@ -22,13 +22,22 @@ class TriangleElements:
     def triangles(self) -> NDArray[np.int32]:
         return self._triangles
 
-    def stiffness(self, tri_index: int, weight: float = 1.0) -> NDArray[np.float64]:
-        raise NotImplementedError
-
     def mass(self, tri_index: int, weight: float = 1.0) -> NDArray[np.float64]:
+        # weight: scalar weight for mass matrix
         raise NotImplementedError
 
-    def convection(self, tri_index: int, weight_x: float = 1.0, weight_y: float = 1.0) -> NDArray[np.float64]:
+    def stiffness(self, tri_index: int, weight: float, diffusion_tensor: NDArray[np.float64]) -> NDArray[np.float64]:
+        # assert diffusion_tensor.shape == (2,2)
+        # 2x2 diffusion tensor, examples:
+        # np.eye(2) => u_xx + u_yy
+        # matrix [0.0, 1.0; 1.0, 0.0] => u_xy + u_yx = 2 u_xy
+        raise NotImplementedError
+
+    def convection(self, tri_index: int, weights: tuple[float, float]) -> NDArray[np.float64]:
+        # assert convection_tensor.shape == (2,1)
+        # 2x1 convection tensor, examples:
+        # np.array([1.0, 0.0]) <=> u_x
+        # np.array([0.0, 1.0]) <=> u_y
         raise NotImplementedError
 
 
@@ -49,17 +58,20 @@ class LinearTriElements(TriangleElements):
         self._b = np.stack([y1 - y2, y2 - y0, y0 - y1], axis=1)
         self._c = np.stack([x2 - x1, x0 - x2, x1 - x0], axis=1)
 
-    def stiffness(self, tri_index: int, weight: float = 1.0) -> NDArray[np.float64]:
+    def stiffness(self, tri_index: int, weight: float, diffusion_tensor: NDArray[np.float64]) -> NDArray[np.float64]:
         b = self._b[tri_index]
         c = self._c[tri_index]
         a = self._areas[tri_index]
-        return weight / (4 * a) * (np.outer(b, b) + np.outer(c, c))
+        g = np.stack([b, c], axis=0)
+        m = g.T @ diffusion_tensor @ g  # shape (3,3)
+        return weight * m / (4 * a)
 
     def mass(self, tri_index: int, weight: float = 1.0) -> NDArray[np.float64]:
         a = self._areas[tri_index]
         return weight * a / 12 * np.array([[2, 1, 1], [1, 2, 1], [1, 1, 2]])
 
-    def convection(self, tri_index: int, weight_x: float = 1.0, weight_y: float = 1.0) -> NDArray[np.float64]:
+    def convection(self, tri_index: int, weights: tuple[float, float]) -> NDArray[np.float64]:
+        weight_x, weight_y = weights
         b = self._b[tri_index]
         c = self._c[tri_index]
         return 1 / 6.0 * np.outer(np.ones(3), weight_x * b + weight_y * c)
