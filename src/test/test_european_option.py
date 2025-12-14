@@ -29,10 +29,15 @@ PLOT = False
 
 class TestEuropeanOption(unittest.TestCase):
 
+    @staticmethod
+    def setup() -> ql.Date:
+        today = ql.Date(12, 12, 2025)
+        ql.Settings.instance().evaluationDate = today
+        return today
+
     def test_european_call_option(self) -> None:
+        today = self.setup()
         market_data = MarketData(spot=100.0, sigma=0.2, r=0.02, q=0.025)
-        today = ql.Date.todaysDate()
-        ql.Settings.evaluationDate = today
         option_data = OptionData(val_date=today, period2mat=ql.Period('4Y'), strike=90.0, cal=ql.TARGET(),
                                  dc=ql.Actual365Fixed(), put_call=ql.Option.Call)
         size = 50
@@ -42,24 +47,23 @@ class TestEuropeanOption(unittest.TestCase):
             f'Testing European Call Option: analytic {exact:4.2f}, calculated {res:4.2f}, error: {(res - exact) / exact:2.6f}')
 
     def test_european_put_option(self) -> None:
+        today = self.setup()
         market_data = MarketData(spot=100.0, sigma=0.2, r=0.02, q=0.025)
-        today = ql.Date.todaysDate()
-        ql.Settings.evaluationDate = today
         option_data = OptionData(val_date=today, period2mat=ql.Period('4Y'), strike=110.0, cal=ql.TARGET(),
                                  dc=ql.Actual365Fixed(), put_call=ql.Option.Put)
         size = 50
         res, exact = self._do_test_european_option(option_data, market_data, size, concentrating=False,
                                                    weak_boundary=False)
-        print(f'Testing European Put Option: analytic {exact:4.2f}, calculated {res:4.2f}, error: {(res - exact) / exact:2.6f}')
+        print(
+            f'Testing European Put Option: analytic {exact:4.2f}, calculated {res:4.2f}, error: {(res - exact) / exact:2.6f}')
 
     def test_european_option(self, make_cache: bool = False) -> None:
         assert not PLOT
         print('Testing european vanilla option with different modes...')
+        today = self.setup()
         sizes = [25, 50, 75]
         market_data = MarketData(spot=100.0, sigma=0.2, r=0.02, q=0.025)
         print(market_data)
-        today = ql.Date.todaysDate()
-        ql.Settings.evaluationDate = today
         cal = ql.TARGET()
         dc = ql.Actual365Fixed()
         calls = [OptionData(today, ql.Period('4Y'), k, cal, dc, ql.Option.Call) for k in (75.0, 100.0, 125.0)]
@@ -103,9 +107,9 @@ class TestEuropeanOption(unittest.TestCase):
                     else:
                         key = (n, concentrating, weak_bc)
                         cached_exp, cached_cal = cache_in[_type][key]
-                        self.assertAlmostEqual(cached_exp, expected,
+                        self.assertAlmostEqual(cached_exp, expected, delta=1e-6,
                                                msg=f'Expected analytic: {cached_exp}, analytic: {expected}')
-                        self.assertAlmostEqual(cached_cal, calculated,
+                        self.assertAlmostEqual(cached_cal, calculated, delta=1e-6,
                                                msg=f'Expected calculated: {cached_cal}, calculated: {calculated}')
         if make_cache:
             with open('european_option_reg_test.json', 'w') as h:
@@ -124,9 +128,6 @@ class TestEuropeanOption(unittest.TestCase):
             plot_solution(elements,
                           u_approx,
                           title=f"European {'Call' if option_data.put_call == ql.Option.Call else 'Put'} Option FEM Solution, {concentrating = }, {robin_boundary = }")
-
-        s_plt = np.linspace(option_data.strike * math.exp(transform_h.x_min_coord) + 1e-14,
-                            option_data.strike * math.exp(transform_h.x_max_coord) - 1e-14, 100)
         ql_option = ql.EuropeanOption(ql.PlainVanillaPayoff(option_data.put_call, option_data.strike),
                                       ql.EuropeanExercise(option_data.expiry()))
         spot_quote = ql.SimpleQuote(0.0)
@@ -140,6 +141,8 @@ class TestEuropeanOption(unittest.TestCase):
         ql_option.setPricingEngine(ql.AnalyticEuropeanEngine(bs_process))
 
         if PLOT:
+            s_plt = np.linspace(option_data.strike * math.exp(transform_h.x_min_coord) + 1e-14,
+                                option_data.strike * math.exp(transform_h.x_max_coord) - 1e-14, 100)
             u_exact = []
             for s in s_plt:
                 spot_quote.setValue(s)

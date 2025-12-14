@@ -6,8 +6,8 @@
                 false,
                 false
             ],
-            "analytic": 25.96429137,
-            "calculated": 26.7267736647
+            "analytic": 25.9623631,
+            "calculated": 26.3872085316
         },
         {
             "keys": [
@@ -15,8 +15,8 @@
                 true,
                 false
             ],
-            "analytic": 25.96429137,
-            "calculated": 25.8856737578
+            "analytic": 25.9623631,
+            "calculated": 25.6507733509
         },
         {
             "keys": [
@@ -24,8 +24,8 @@
                 false,
                 true
             ],
-            "analytic": 25.96429137,
-            "calculated": 26.7274709356
+            "analytic": 25.9623631,
+            "calculated": 26.3872267026
         },
         {
             "keys": [
@@ -33,8 +33,8 @@
                 true,
                 true
             ],
-            "analytic": 25.96429137,
-            "calculated": 26.2737911789
+            "analytic": 25.9623631,
+            "calculated": 24.9908255819
         },
         {
             "keys": [
@@ -42,8 +42,8 @@
                 false,
                 false
             ],
-            "analytic": 25.96429137,
-            "calculated": 26.1995905795
+            "analytic": 25.9623631,
+            "calculated": 26.1743440471
         },
         {
             "keys": [
@@ -51,8 +51,8 @@
                 true,
                 false
             ],
-            "analytic": 25.96429137,
-            "calculated": 25.9105494365
+            "analytic": 25.9623631,
+            "calculated": 25.9616550172
         },
         {
             "keys": [
@@ -60,8 +60,8 @@
                 false,
                 true
             ],
-            "analytic": 25.96429137,
-            "calculated": 26.1996111227
+            "analytic": 25.9623631,
+            "calculated": 26.1743502552
         },
         {
             "keys": [
@@ -69,8 +69,8 @@
                 true,
                 true
             ],
-            "analytic": 25.96429137,
-            "calculated": 25.9372917584
+            "analytic": 25.9623631,
+            "calculated": 25.9667933323
         },
         {
             "keys": [
@@ -78,8 +78,8 @@
                 false,
                 false
             ],
-            "analytic": 25.96429137,
-            "calculated": 26.0199971806
+            "analytic": 25.9623631,
+            "calculated": 25.9818611467
         },
         {
             "keys": [
@@ -87,8 +87,8 @@
                 true,
                 false
             ],
-            "analytic": 25.96429137,
-            "calculated": 25.9685051551
+            "analytic": 25.9623631,
+            "calculated": 25.9288495114
         },
         {
             "keys": [
@@ -96,8 +96,8 @@
                 false,
                 true
             ],
-            "analytic": 25.96429137,
-            "calculated": 26.0199979131
+            "analytic": 25.9623631,
+            "calculated": 25.9818581715
         },
         {
             "keys": [
@@ -105,8 +105,8 @@
                 true,
                 true
             ],
-            "analytic": 25.96429137,
-            "calculated": 25.9731448445
+            "analytic": 25.9623631,
+            "calculated": 25.9276416948
         }
     ],
     "ATM C": [
@@ -116,8 +116,8 @@
                 false,
                 false
             ],
-            "analytic": 13.60257126,
-            "calculated": 13.7625444952
+            "analytic": 13.59567779,
+            "calculated": 13.3813819351
         },
         {
             "keys": [
@@ -125,8 +125,8 @@
                 true,
                 false
             ],
-            "analytic": 13.60257126,
-            "calculated": 13.4375917403
+            "analytic": 13.59567779,
+            "calculated": 13.340147645
         },
         {
             "keys": [
@@ -134,8 +134,8 @@
                 false,
                 true
             ],
-            "analytic": 13.60257126,
-            "calculated": 13.7626431878
+            "analytic": 13.59567779,
+            "calculated": 13.3809344761
         },
         {
             "keys": [
@@ -143,8 +143,8 @@
                 true,
                 true
             ],
-            "analytic": 13.60257126,
-            "calculated": 13.6043407002
+            "analytic": 13.59567779,
+            "calculated": 12.8779746842
         },
         {
             "keys": [
@@ -152,8 +152,8 @@
                 false,
                 false
             ],
-            "analytic": 13.60257126,
-            "calculated": 13.8611706922
+            "analytic": 13.59567779,
+            "calculated": 13.8586944982
         },
         {
             "keys": [
@@ -161,8 +161,8 @@
                 true,
                 false
             ],
-            "analytic": 13.60257126,
-            "calculated": 13.567456956
+            "analytic": 13.59567779,
+            "calculated": 13.5705158019
         },
         {
             "keys": [
@@ -170,8 +170,8 @@
                 false,
                 true
             ],
-            "analytic": 13.60257126,
-            "calculated": 13.8611730538
+            "analytic": 13.59567779,
+            "calculated": 13.8586958208
         },
         {
             "keys": [
@@ -179,8 +179,8 @@
                 true,
                 true
             ],
-            "analytic": 13.60257126,
-            "calculated": 13.571887425
+            "analytic": 13.59567779,
+            "calculated": 13.5720163558
         },
         {
             "keys": [
@@ -188,8 +188,8 @@
                 false,
                 false
             ],
-            "analytic": 13.60257126,
-            "calculated": 13.6189553439
+            "analytic": 13.59567779,
+            "calculated": 13.5506519454
         },
         {
             "keys": [
@@ -197,8 +197,8 @@
                 true,
                 false
             ],
-            "analytic": 13.60257126,
-            "calculated": 13.596032656
+            "analytic": 13.59567779,
+            "calculated": 13.5842383099
         },
         {
             "keys": [
@@ -206,8 +206,8 @@
                 false,
                 true
             ],
-            "analytic": 13.60257126,
-            "calculated": 13.6189555924
+            "analytic": 13.59567779,
+            "calculated": 13.5506516204
         },
         {
             "keys": [
@@ -215,8 +215,8 @@
                 true,
                 true
             ],
-            "analytic": 13.60257126,
-            "calculated": 13.5969444389
+            "analytic": 13.59567779,
+            "calculated": 13.5841168625
         }
     ],
     "OTM C": [
@@ -226,8 +226,8 @@
                 false,
                 false
             ],
-            "analytic": 6.74450976,
-            "calculated": 6.9820622929
+            "analytic": 6.73700102,
+            "calculated": 6.6768314496
         },
         {
             "keys": [
@@ -235,8 +235,8 @@
                 true,
                 false
             ],
-            "analytic": 6.74450976,
-            "calculated": 6.7216347198
+            "analytic": 6.73700102,
+            "calculated": 6.6819221296
         },
         {
             "keys": [
@@ -244,8 +244,8 @@
                 false,
                 true
             ],
-            "analytic": 6.74450976,
-            "calculated": 6.9820630038
+            "analytic": 6.73700102,
+            "calculated": 6.6764847145
         },
         {
             "keys": [
@@ -253,8 +253,8 @@
                 true,
                 true
             ],
-            "analytic": 6.74450976,
-            "calculated": 6.7368751048
+            "analytic": 6.73700102,
+            "calculated": 6.3902790077
         },
         {
             "keys": [
@@ -262,8 +262,8 @@
                 false,
                 false
             ],
-            "analytic": 6.74450976,
-            "calculated": 6.889900479
+            "analytic": 6.73700102,
+            "calculated": 6.9136844263
         },
         {
             "keys": [
@@ -271,8 +271,8 @@
                 true,
                 false
             ],
-            "analytic": 6.74450976,
-            "calculated": 6.7205715205
+            "analytic": 6.73700102,
+            "calculated": 6.7378908102
         },
         {
             "keys": [
@@ -280,8 +280,8 @@
                 false,
                 true
             ],
-            "analytic": 6.74450976,
-            "calculated": 6.8899007506
+            "analytic": 6.73700102,
+            "calculated": 6.913684757
         },
         {
             "keys": [
@@ -289,8 +289,8 @@
                 true,
                 true
             ],
-            "analytic": 6.74450976,
-            "calculated": 6.7214045914
+            "analytic": 6.73700102,
+            "calculated": 6.7379153077
         },
         {
             "keys": [
@@ -298,8 +298,8 @@
                 false,
                 false
             ],
-            "analytic": 6.74450976,
-            "calculated": 6.7710201098
+            "analytic": 6.73700102,
+            "calculated": 6.7216577232
         },
         {
             "keys": [
@@ -307,8 +307,8 @@
                 true,
                 false
             ],
-            "analytic": 6.74450976,
-            "calculated": 6.7342616919
+            "analytic": 6.73700102,
+            "calculated": 6.7378191823
         },
         {
             "keys": [
@@ -316,8 +316,8 @@
                 false,
                 true
             ],
-            "analytic": 6.74450976,
-            "calculated": 6.7710201796
+            "analytic": 6.73700102,
+            "calculated": 6.7216576641
         },
         {
             "keys": [
@@ -325,8 +325,8 @@
                 true,
                 true
             ],
-            "analytic": 6.74450976,
-            "calculated": 6.7344879011
+            "analytic": 6.73700102,
+            "calculated": 6.7378371334
         }
     ],
     "OTM P": [
@@ -336,8 +336,8 @@
                 false,
                 false
             ],
-            "analytic": 4.72148624,
-            "calculated": 5.0390412327
+            "analytic": 4.71475105,
+            "calculated": 4.8143800303
         },
         {
             "keys": [
@@ -345,8 +345,8 @@
                 true,
                 false
             ],
-            "analytic": 4.72148624,
-            "calculated": 4.6947342265
+            "analytic": 4.71475105,
+            "calculated": 4.6683154703
         },
         {
             "keys": [
@@ -354,8 +354,8 @@
                 false,
                 true
             ],
-            "analytic": 4.72148624,
-            "calculated": 5.0390401949
+            "analytic": 4.71475105,
+            "calculated": 4.8143813936
         },
         {
             "keys": [
@@ -363,8 +363,8 @@
                 true,
                 true
             ],
-            "analytic": 4.72148624,
-            "calculated": 4.7042753191
+            "analytic": 4.71475105,
+            "calculated": 4.6680975161
         },
         {
             "keys": [
@@ -372,8 +372,8 @@
                 false,
                 false
             ],
-            "analytic": 4.72148624,
-            "calculated": 4.8349293944
+            "analytic": 4.71475105,
+            "calculated": 4.8334659039
         },
         {
             "keys": [
@@ -381,8 +381,8 @@
                 true,
                 false
             ],
-            "analytic": 4.72148624,
-            "calculated": 4.7103677723
+            "analytic": 4.71475105,
+            "calculated": 4.7160518843
         },
         {
             "keys": [
@@ -390,8 +390,8 @@
                 false,
                 true
             ],
-            "analytic": 4.72148624,
-            "calculated": 4.8349293708
+            "analytic": 4.71475105,
+            "calculated": 4.8334659005
         },
         {
             "keys": [
@@ -399,8 +399,8 @@
                 true,
                 true
             ],
-            "analytic": 4.72148624,
-            "calculated": 4.7102791671
+            "analytic": 4.71475105,
+            "calculated": 4.7157105025
         },
         {
             "keys": [
@@ -408,8 +408,8 @@
                 false,
                 false
             ],
-            "analytic": 4.72148624,
-            "calculated": 4.7345848339
+            "analytic": 4.71475105,
+            "calculated": 4.6965220088
         },
         {
             "keys": [
@@ -417,8 +417,8 @@
                 true,
                 false
             ],
-            "analytic": 4.72148624,
-            "calculated": 4.7223794551
+            "analytic": 4.71475105,
+            "calculated": 4.7047625493
         },
         {
             "keys": [
@@ -426,8 +426,8 @@
                 false,
                 true
             ],
-            "analytic": 4.72148624,
-            "calculated": 4.734584831
+            "analytic": 4.71475105,
+            "calculated": 4.6965220066
         },
         {
             "keys": [
@@ -435,8 +435,8 @@
                 true,
                 true
             ],
-            "analytic": 4.72148624,
-            "calculated": 4.7223815686
+            "analytic": 4.71475105,
+            "calculated": 4.7047670728
         }
     ],
     "ATM P": [
@@ -446,8 +446,8 @@
                 false,
                 false
             ],
-            "analytic": 15.43388146,
-            "calculated": 15.5633211443
+            "analytic": 15.4247099,
+            "calculated": 15.2886971438
         },
         {
             "keys": [
@@ -455,8 +455,8 @@
                 true,
                 false
             ],
-            "analytic": 15.43388146,
-            "calculated": 15.2774794745
+            "analytic": 15.4247099,
+            "calculated": 15.2790990231
         },
         {
             "keys": [
@@ -464,8 +464,8 @@
                 false,
                 true
             ],
-            "analytic": 15.43388146,
-            "calculated": 15.5633191317
+            "analytic": 15.4247099,
+            "calculated": 15.2887002605
         },
         {
             "keys": [
@@ -473,8 +473,8 @@
                 true,
                 true
             ],
-            "analytic": 15.43388146,
-            "calculated": 15.3111870806
+            "analytic": 15.4247099,
+            "calculated": 15.2807031485
         },
         {
             "keys": [
@@ -482,8 +482,8 @@
                 false,
                 false
             ],
-            "analytic": 15.43388146,
-            "calculated": 15.5806724968
+            "analytic": 15.4247099,
+            "calculated": 15.5842037701
         },
         {
             "keys": [
@@ -491,8 +491,8 @@
                 true,
                 false
             ],
-            "analytic": 15.43388146,
-            "calculated": 15.4075327886
+            "analytic": 15.4247099,
+            "calculated": 15.4014060305
         },
         {
             "keys": [
@@ -500,8 +500,8 @@
                 false,
                 true
             ],
-            "analytic": 15.43388146,
-            "calculated": 15.5806724632
+            "analytic": 15.4247099,
+            "calculated": 15.5842037406
         },
         {
             "keys": [
@@ -509,8 +509,8 @@
                 true,
                 true
             ],
-            "analytic": 15.43388146,
-            "calculated": 15.4070778393
+            "analytic": 15.4247099,
+            "calculated": 15.3978674965
         },
         {
             "keys": [
@@ -518,8 +518,8 @@
                 false,
                 false
             ],
-            "analytic": 15.43388146,
-            "calculated": 15.4301734152
+            "analytic": 15.4247099,
+            "calculated": 15.3735426501
         },
         {
             "keys": [
@@ -527,8 +527,8 @@
                 true,
                 false
             ],
-            "analytic": 15.43388146,
-            "calculated": 15.4289036858
+            "analytic": 15.4247099,
+            "calculated": 15.4172501346
         },
         {
             "keys": [
@@ -536,8 +536,8 @@
                 false,
                 true
             ],
-            "analytic": 15.43388146,
-            "calculated": 15.4301733635
+            "analytic": 15.4247099,
+            "calculated": 15.373542642
         },
         {
             "keys": [
@@ -545,8 +545,8 @@
                 true,
                 true
             ],
-            "analytic": 15.43388146,
-            "calculated": 15.4289265271
+            "analytic": 15.4247099,
+            "calculated": 15.4172695014
         }
     ],
     "ITM P": [
@@ -556,8 +556,8 @@
                 false,
                 false
             ],
-            "analytic": 31.64993531,
-            "calculated": 31.7043538462
+            "analytic": 31.64267727,
+            "calculated": 31.4477833187
         },
         {
             "keys": [
@@ -565,8 +565,8 @@
                 true,
                 false
             ],
-            "analytic": 31.64993531,
-            "calculated": 31.2894565987
+            "analytic": 31.64267727,
+            "calculated": 31.38248799
         },
         {
             "keys": [
@@ -574,8 +574,8 @@
                 false,
                 true
             ],
-            "analytic": 31.64993531,
-            "calculated": 31.7043476813
+            "analytic": 31.64267727,
+            "calculated": 31.4477826619
         },
         {
             "keys": [
@@ -583,8 +583,8 @@
                 true,
                 true
             ],
-            "analytic": 31.64993531,
-            "calculated": 31.3882973535
+            "analytic": 31.64267727,
+            "calculated": 31.4047950652
         },
         {
             "keys": [
@@ -592,8 +592,8 @@
                 false,
                 false
             ],
-            "analytic": 31.64993531,
-            "calculated": 31.7352309599
+            "analytic": 31.64267727,
+            "calculated": 31.7504035588
         },
         {
             "keys": [
@@ -601,8 +601,8 @@
                 true,
                 false
             ],
-            "analytic": 31.64993531,
-            "calculated": 31.6054016414
+            "analytic": 31.64267727,
+            "calculated": 31.6045209278
         },
         {
             "keys": [
@@ -610,8 +610,8 @@
                 false,
                 true
             ],
-            "analytic": 31.64993531,
-            "calculated": 31.7352316265
+            "analytic": 31.64267727,
+            "calculated": 31.7504035772
         },
         {
             "keys": [
@@ -619,8 +619,8 @@
                 true,
                 true
             ],
-            "analytic": 31.64993531,
-            "calculated": 31.6048265086
+            "analytic": 31.64267727,
+            "calculated": 31.5871222526
         },
         {
             "keys": [
@@ -628,8 +628,8 @@
                 false,
                 false
             ],
-            "analytic": 31.64993531,
-            "calculated": 31.6377700647
+            "analytic": 31.64267727,
+            "calculated": 31.5904232164
         },
         {
             "keys": [
@@ -637,8 +637,8 @@
                 true,
                 false
             ],
-            "analytic": 31.64993531,
-            "calculated": 31.6419976251
+            "analytic": 31.64267727,
+            "calculated": 31.6321652876
         },
         {
             "keys": [
@@ -646,8 +646,8 @@
                 false,
                 true
             ],
-            "analytic": 31.64993531,
-            "calculated": 31.637769578
+            "analytic": 31.64267727,
+            "calculated": 31.5904231014
         },
         {
             "keys": [
@@ -655,8 +655,8 @@
                 true,
                 true
             ],
-            "analytic": 31.64993531,
-            "calculated": 31.6420691344
+            "analytic": 31.64267727,
+            "calculated": 31.6321310561
         }
     ]
 }
