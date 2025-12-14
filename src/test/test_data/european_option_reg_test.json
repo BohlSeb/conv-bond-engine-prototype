@@ -1,0 +1,662 @@
+{
+    "ITM C": [
+        {
+            "keys": [
+                25,
+                false,
+                false
+            ],
+            "analytic": 25.96429137,
+            "calculated": 26.7267736647
+        },
+        {
+            "keys": [
+                25,
+                true,
+                false
+            ],
+            "analytic": 25.96429137,
+            "calculated": 25.8856737578
+        },
+        {
+            "keys": [
+                25,
+                false,
+                true
+            ],
+            "analytic": 25.96429137,
+            "calculated": 26.7274709356
+        },
+        {
+            "keys": [
+                25,
+                true,
+                true
+            ],
+            "analytic": 25.96429137,
+            "calculated": 26.2737911789
+        },
+        {
+            "keys": [
+                50,
+                false,
+                false
+            ],
+            "analytic": 25.96429137,
+            "calculated": 26.1995905795
+        },
+        {
+            "keys": [
+                50,
+                true,
+                false
+            ],
+            "analytic": 25.96429137,
+            "calculated": 25.9105494365
+        },
+        {
+            "keys": [
+                50,
+                false,
+                true
+            ],
+            "analytic": 25.96429137,
+            "calculated": 26.1996111227
+        },
+        {
+            "keys": [
+                50,
+                true,
+                true
+            ],
+            "analytic": 25.96429137,
+            "calculated": 25.9372917584
+        },
+        {
+            "keys": [
+                75,
+                false,
+                false
+            ],
+            "analytic": 25.96429137,
+            "calculated": 26.0199971806
+        },
+        {
+            "keys": [
+                75,
+                true,
+                false
+            ],
+            "analytic": 25.96429137,
+            "calculated": 25.9685051551
+        },
+        {
+            "keys": [
+                75,
+                false,
+                true
+            ],
+            "analytic": 25.96429137,
+            "calculated": 26.0199979131
+        },
+        {
+            "keys": [
+                75,
+                true,
+                true
+            ],
+            "analytic": 25.96429137,
+            "calculated": 25.9731448445
+        }
+    ],
+    "ATM C": [
+        {
+            "keys": [
+                25,
+                false,
+                false
+            ],
+            "analytic": 13.60257126,
+            "calculated": 13.7625444952
+        },
+        {
+            "keys": [
+                25,
+                true,
+                false
+            ],
+            "analytic": 13.60257126,
+            "calculated": 13.4375917403
+        },
+        {
+            "keys": [
+                25,
+                false,
+                true
+            ],
+            "analytic": 13.60257126,
+            "calculated": 13.7626431878
+        },
+        {
+            "keys": [
+                25,
+                true,
+                true
+            ],
+            "analytic": 13.60257126,
+            "calculated": 13.6043407002
+        },
+        {
+            "keys": [
+                50,
+                false,
+                false
+            ],
+            "analytic": 13.60257126,
+            "calculated": 13.8611706922
+        },
+        {
+            "keys": [
+                50,
+                true,
+                false
+            ],
+            "analytic": 13.60257126,
+            "calculated": 13.567456956
+        },
+        {
+            "keys": [
+                50,
+                false,
+                true
+            ],
+            "analytic": 13.60257126,
+            "calculated": 13.8611730538
+        },
+        {
+            "keys": [
+                50,
+                true,
+                true
+            ],
+            "analytic": 13.60257126,
+            "calculated": 13.571887425
+        },
+        {
+            "keys": [
+                75,
+                false,
+                false
+            ],
+            "analytic": 13.60257126,
+            "calculated": 13.6189553439
+        },
+        {
+            "keys": [
+                75,
+                true,
+                false
+            ],
+            "analytic": 13.60257126,
+            "calculated": 13.596032656
+        },
+        {
+            "keys": [
+                75,
+                false,
+                true
+            ],
+            "analytic": 13.60257126,
+            "calculated": 13.6189555924
+        },
+        {
+            "keys": [
+                75,
+                true,
+                true
+            ],
+            "analytic": 13.60257126,
+            "calculated": 13.5969444389
+        }
+    ],
+    "OTM C": [
+        {
+            "keys": [
+                25,
+                false,
+                false
+            ],
+            "analytic": 6.74450976,
+            "calculated": 6.9820622929
+        },
+        {
+            "keys": [
+                25,
+                true,
+                false
+            ],
+            "analytic": 6.74450976,
+            "calculated": 6.7216347198
+        },
+        {
+            "keys": [
+                25,
+                false,
+                true
+            ],
+            "analytic": 6.74450976,
+            "calculated": 6.9820630038
+        },
+        {
+            "keys": [
+                25,
+                true,
+                true
+            ],
+            "analytic": 6.74450976,
+            "calculated": 6.7368751048
+        },
+        {
+            "keys": [
+                50,
+                false,
+                false
+            ],
+            "analytic": 6.74450976,
+            "calculated": 6.889900479
+        },
+        {
+            "keys": [
+                50,
+                true,
+                false
+            ],
+            "analytic": 6.74450976,
+            "calculated": 6.7205715205
+        },
+        {
+            "keys": [
+                50,
+                false,
+                true
+            ],
+            "analytic": 6.74450976,
+            "calculated": 6.8899007506
+        },
+        {
+            "keys": [
+                50,
+                true,
+                true
+            ],
+            "analytic": 6.74450976,
+            "calculated": 6.7214045914
+        },
+        {
+            "keys": [
+                75,
+                false,
+                false
+            ],
+            "analytic": 6.74450976,
+            "calculated": 6.7710201098
+        },
+        {
+            "keys": [
+                75,
+                true,
+                false
+            ],
+            "analytic": 6.74450976,
+            "calculated": 6.7342616919
+        },
+        {
+            "keys": [
+                75,
+                false,
+                true
+            ],
+            "analytic": 6.74450976,
+            "calculated": 6.7710201796
+        },
+        {
+            "keys": [
+                75,
+                true,
+                true
+            ],
+            "analytic": 6.74450976,
+            "calculated": 6.7344879011
+        }
+    ],
+    "OTM P": [
+        {
+            "keys": [
+                25,
+                false,
+                false
+            ],
+            "analytic": 4.72148624,
+            "calculated": 5.0390412327
+        },
+        {
+            "keys": [
+                25,
+                true,
+                false
+            ],
+            "analytic": 4.72148624,
+            "calculated": 4.6947342265
+        },
+        {
+            "keys": [
+                25,
+                false,
+                true
+            ],
+            "analytic": 4.72148624,
+            "calculated": 5.0390401949
+        },
+        {
+            "keys": [
+                25,
+                true,
+                true
+            ],
+            "analytic": 4.72148624,
+            "calculated": 4.7042753191
+        },
+        {
+            "keys": [
+                50,
+                false,
+                false
+            ],
+            "analytic": 4.72148624,
+            "calculated": 4.8349293944
+        },
+        {
+            "keys": [
+                50,
+                true,
+                false
+            ],
+            "analytic": 4.72148624,
+            "calculated": 4.7103677723
+        },
+        {
+            "keys": [
+                50,
+                false,
+                true
+            ],
+            "analytic": 4.72148624,
+            "calculated": 4.8349293708
+        },
+        {
+            "keys": [
+                50,
+                true,
+                true
+            ],
+            "analytic": 4.72148624,
+            "calculated": 4.7102791671
+        },
+        {
+            "keys": [
+                75,
+                false,
+                false
+            ],
+            "analytic": 4.72148624,
+            "calculated": 4.7345848339
+        },
+        {
+            "keys": [
+                75,
+                true,
+                false
+            ],
+            "analytic": 4.72148624,
+            "calculated": 4.7223794551
+        },
+        {
+            "keys": [
+                75,
+                false,
+                true
+            ],
+            "analytic": 4.72148624,
+            "calculated": 4.734584831
+        },
+        {
+            "keys": [
+                75,
+                true,
+                true
+            ],
+            "analytic": 4.72148624,
+            "calculated": 4.7223815686
+        }
+    ],
+    "ATM P": [
+        {
+            "keys": [
+                25,
+                false,
+                false
+            ],
+            "analytic": 15.43388146,
+            "calculated": 15.5633211443
+        },
+        {
+            "keys": [
+                25,
+                true,
+                false
+            ],
+            "analytic": 15.43388146,
+            "calculated": 15.2774794745
+        },
+        {
+            "keys": [
+                25,
+                false,
+                true
+            ],
+            "analytic": 15.43388146,
+            "calculated": 15.5633191317
+        },
+        {
+            "keys": [
+                25,
+                true,
+                true
+            ],
+            "analytic": 15.43388146,
+            "calculated": 15.3111870806
+        },
+        {
+            "keys": [
+                50,
+                false,
+                false
+            ],
+            "analytic": 15.43388146,
+            "calculated": 15.5806724968
+        },
+        {
+            "keys": [
+                50,
+                true,
+                false
+            ],
+            "analytic": 15.43388146,
+            "calculated": 15.4075327886
+        },
+        {
+            "keys": [
+                50,
+                false,
+                true
+            ],
+            "analytic": 15.43388146,
+            "calculated": 15.5806724632
+        },
+        {
+            "keys": [
+                50,
+                true,
+                true
+            ],
+            "analytic": 15.43388146,
+            "calculated": 15.4070778393
+        },
+        {
+            "keys": [
+                75,
+                false,
+                false
+            ],
+            "analytic": 15.43388146,
+            "calculated": 15.4301734152
+        },
+        {
+            "keys": [
+                75,
+                true,
+                false
+            ],
+            "analytic": 15.43388146,
+            "calculated": 15.4289036858
+        },
+        {
+            "keys": [
+                75,
+                false,
+                true
+            ],
+            "analytic": 15.43388146,
+            "calculated": 15.4301733635
+        },
+        {
+            "keys": [
+                75,
+                true,
+                true
+            ],
+            "analytic": 15.43388146,
+            "calculated": 15.4289265271
+        }
+    ],
+    "ITM P": [
+        {
+            "keys": [
+                25,
+                false,
+                false
+            ],
+            "analytic": 31.64993531,
+            "calculated": 31.7043538462
+        },
+        {
+            "keys": [
+                25,
+                true,
+                false
+            ],
+            "analytic": 31.64993531,
+            "calculated": 31.2894565987
+        },
+        {
+            "keys": [
+                25,
+                false,
+                true
+            ],
+            "analytic": 31.64993531,
+            "calculated": 31.7043476813
+        },
+        {
+            "keys": [
+                25,
+                true,
+                true
+            ],
+            "analytic": 31.64993531,
+            "calculated": 31.3882973535
+        },
+        {
+            "keys": [
+                50,
+                false,
+                false
+            ],
+            "analytic": 31.64993531,
+            "calculated": 31.7352309599
+        },
+        {
+            "keys": [
+                50,
+                true,
+                false
+            ],
+            "analytic": 31.64993531,
+            "calculated": 31.6054016414
+        },
+        {
+            "keys": [
+                50,
+                false,
+                true
+            ],
+            "analytic": 31.64993531,
+            "calculated": 31.7352316265
+        },
+        {
+            "keys": [
+                50,
+                true,
+                true
+            ],
+            "analytic": 31.64993531,
+            "calculated": 31.6048265086
+        },
+        {
+            "keys": [
+                75,
+                false,
+                false
+            ],
+            "analytic": 31.64993531,
+            "calculated": 31.6377700647
+        },
+        {
+            "keys": [
+                75,
+                true,
+                false
+            ],
+            "analytic": 31.64993531,
+            "calculated": 31.6419976251
+        },
+        {
+            "keys": [
+                75,
+                false,
+                true
+            ],
+            "analytic": 31.64993531,
+            "calculated": 31.637769578
+        },
+        {
+            "keys": [
+                75,
+                true,
+                true
+            ],
+            "analytic": 31.64993531,
+            "calculated": 31.6420691344
+        }
+    ]
+}

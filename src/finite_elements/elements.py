@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 # 2D Triangle Elements interface
 class TriangleElements:
 
-    def __init__(self,points: NDArray[np.float64], triangles: NDArray[np.int32], areas: NDArray[np.float64]) -> None:
+    def __init__(self, points: NDArray[np.float64], triangles: NDArray[np.int32], areas: NDArray[np.float64]) -> None:
         self._points = points
         self._triangles = triangles
         self._areas = areas
@@ -41,7 +41,6 @@ class TriangleElements:
         raise NotImplementedError
 
 
-
 class LinearTriElements(TriangleElements):
 
     def __init__(self, points: NDArray[np.float64], triangles: NDArray[np.int32], areas: NDArray[np.float64]) -> None:
@@ -54,7 +53,7 @@ class LinearTriElements(TriangleElements):
         y1 = points[triangles[:, 1], 1]
         y2 = points[triangles[:, 2], 1]
 
-        # "shape"-function gradient coefficients
+        # shape-function gradients coefficients
         self._b = np.stack([y1 - y2, y2 - y0, y0 - y1], axis=1)
         self._c = np.stack([x2 - x1, x0 - x2, x1 - x0], axis=1)
 

@@ -9,7 +9,7 @@ from finite_elements.interval import ConcentratingInterval
 from finite_elements.triangulation import DelaunayMesh2D
 from finite_elements.elements import LinearTriElements
 from finite_elements.assembler import FEMAssembler
-from finite_elements.boundary import RectangleHelper, ConstStrongDirichletBC, ConstRobinBC
+from finite_elements.boundary import RectangleHelper, ConstDirichletBC, ConstRobinBC
 
 from test.utils import plot_solution
 
@@ -51,10 +51,10 @@ class TestConvection(unittest.TestCase):
         elements = LinearTriElements(mesh.points(), mesh.triangles(), mesh.areas())
         b_help = RectangleHelper(elements.points())
 
-        bc_left = ConstStrongDirichletBC(b_help.x_min(), elements.points(), Constant(g))
+        bc_left = ConstDirichletBC(b_help.x_min(), elements.points(), Constant(g))
 
         if not weak_dirichlet:
-            bc_right = ConstStrongDirichletBC(b_help.x_max(), elements.points(), Constant(0.0))
+            bc_right = ConstDirichletBC(b_help.x_max(), elements.points(), Constant(0.0))
         else:
             bc_right = ConstRobinBC(b_help.x_max(),
                                     elements.points(),
@@ -81,7 +81,7 @@ class TestConvection(unittest.TestCase):
         lhs_stiff = assembler.assemble_stiffness()
         lhs_conv = assembler.assemble_convection(weight_x=lambda _x, _y: dirichlet_beta[0],
                                                  weight_y=lambda _x, _y: dirichlet_beta[1])
-        lhs = (kappa * lhs_stiff.tocsr() + lhs_conv.tocsr()).tolil()  # todo: figure this out
+        lhs = (kappa * lhs_stiff.tocsr() + lhs_conv.tocsr()).tolil()  # todo: figure out which matrix formats to use when and where
 
         for bc in [bc_top, bc_bottom, bc_right, bc_left]:
             bc.apply(lhs, rhs)

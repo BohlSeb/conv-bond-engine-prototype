@@ -9,7 +9,7 @@ from finite_elements.functions import Scalar, Constant
 from finite_elements.triangulation import DelaunayMesh2D
 from finite_elements.elements import LinearTriElements
 from finite_elements.assembler import FEMAssembler
-from finite_elements.boundary import RectangleHelper, ConstStrongDirichletBC, ConstNeumannBC
+from finite_elements.boundary import RectangleHelper, ConstDirichletBC, ConstNeumannBC
 
 from test.utils import plot_solution
 
@@ -37,7 +37,7 @@ class BoundaryConditionTest(unittest.TestCase):
     def test_laplace_dirichlet(self) -> None:
         elements = self._elements
         helper = RectangleHelper(elements.points())
-        linear_condition = ConstStrongDirichletBC(helper.boundary(), elements.points(), Scalar(lambda x, y: x + y))
+        linear_condition = ConstDirichletBC(helper.boundary(), elements.points(), Scalar(lambda x, y: x + y))
         assembler = FEMAssembler(elements)
         lhs = assembler.assemble_stiffness()
         rhs = np.zeros(elements.points().shape[0])
@@ -52,8 +52,8 @@ class BoundaryConditionTest(unittest.TestCase):
         elements = self._elements
         helper = RectangleHelper(elements.points())
         f = 10 * np.ones(elements.points().shape[0])
-        linear_condition = ConstStrongDirichletBC(helper.boundary(), elements.points(),
-                                                  Scalar(lambda x, y: np.sin(np.pi * x) - np.cos(np.pi * y)))
+        linear_condition = ConstDirichletBC(helper.boundary(), elements.points(),
+                                            Scalar(lambda x, y: np.sin(np.pi * x) - np.cos(np.pi * y)))
         assembler = FEMAssembler(elements)
         lhs_f = assembler.assemble_stiffness()
         rhs_f = assembler.assemble_mass().toarray() @ f
@@ -68,7 +68,7 @@ class BoundaryConditionTest(unittest.TestCase):
         x = elements.points()[:, 0]
         y = elements.points()[:, 1]
         f = 2 * np.pi ** 2 * (np.sin(np.pi * x) - np.cos(np.pi * y))
-        trig_condition = ConstStrongDirichletBC(helper.boundary(), elements.points(), Scalar(lambda _x, _y: _x + _y))
+        trig_condition = ConstDirichletBC(helper.boundary(), elements.points(), Scalar(lambda _x, _y: _x + _y))
         assembler = FEMAssembler(elements)
         lhs_f = assembler.assemble_stiffness()
         rhs_f = assembler.assemble_mass().toarray() @ f
@@ -80,9 +80,9 @@ class BoundaryConditionTest(unittest.TestCase):
     def test_laplace_neumann(self) -> None:
         elements = self._elements
         helper = RectangleHelper(elements.points())
-        dirichlet_1 = ConstStrongDirichletBC(helper.x_min(), elements.points(), Scalar(lambda x, y: x + y))
-        dirichlet_2 = ConstStrongDirichletBC(helper.x_max(), elements.points(), Scalar(lambda x, y: x + y))
-        dirichlet_3 = ConstStrongDirichletBC(helper.y_max(), elements.points(), Scalar(lambda x, y: x + y))
+        dirichlet_1 = ConstDirichletBC(helper.x_min(), elements.points(), Scalar(lambda x, y: x + y))
+        dirichlet_2 = ConstDirichletBC(helper.x_max(), elements.points(), Scalar(lambda x, y: x + y))
+        dirichlet_3 = ConstDirichletBC(helper.y_max(), elements.points(), Scalar(lambda x, y: x + y))
         neumann = ConstNeumannBC(helper.y_min(), elements.points(), Constant(-1.0))
         assembler = FEMAssembler(elements)
         lhs = assembler.assemble_stiffness()
