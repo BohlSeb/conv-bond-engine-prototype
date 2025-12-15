@@ -30,13 +30,13 @@ PLOT = False
 class TestEuropeanOption(unittest.TestCase):
 
     @staticmethod
-    def setup() -> ql.Date:
+    def initialize_today() -> ql.Date:
         today = ql.Date(12, 12, 2025)
         ql.Settings.instance().evaluationDate = today
         return today
 
     def test_european_call_option(self) -> None:
-        today = self.setup()
+        today = self.initialize_today()
         market_data = MarketData(spot=100.0, sigma=0.2, r=0.02, q=0.025)
         option_data = OptionData(val_date=today, period2mat=ql.Period('4Y'), strike=90.0, cal=ql.TARGET(),
                                  dc=ql.Actual365Fixed(), put_call=ql.Option.Call)
@@ -47,7 +47,7 @@ class TestEuropeanOption(unittest.TestCase):
             f'Testing European Call Option: analytic {exact:4.2f}, calculated {res:4.2f}, error: {(res - exact) / exact:2.6f}')
 
     def test_european_put_option(self) -> None:
-        today = self.setup()
+        today = self.initialize_today()
         market_data = MarketData(spot=100.0, sigma=0.2, r=0.02, q=0.025)
         option_data = OptionData(val_date=today, period2mat=ql.Period('4Y'), strike=110.0, cal=ql.TARGET(),
                                  dc=ql.Actual365Fixed(), put_call=ql.Option.Put)
@@ -57,7 +57,7 @@ class TestEuropeanOption(unittest.TestCase):
         print(
             f'Testing European Put Option: analytic {exact:4.2f}, calculated {res:4.2f}, error: {(res - exact) / exact:2.6f}')
 
-    def test_european_option(self, make_cache: bool = False) -> None:
+    def test_european_option(self, cache_mode: bool = False) -> None:
         if PLOT:
             raise RuntimeError(
                 "PLOT=True detected during test execution. "
@@ -65,7 +65,7 @@ class TestEuropeanOption(unittest.TestCase):
                 "Set PLOT=False to run tests."
             )
         print('Testing european vanilla option with different modes...')
-        today = self.setup()
+        today = self.initialize_today()
         sizes = [25, 50, 75]
         market_data = MarketData(spot=100.0, sigma=0.2, r=0.02, q=0.025)
         print(market_data)
@@ -82,16 +82,16 @@ class TestEuropeanOption(unittest.TestCase):
 
         cached_out: dict[str, list[dict[str, Any]]] = {}
         cache_in: dict[str, dict[tuple[int, bool, bool], tuple[float, float]]] = {}
-        if not make_cache:
+        if not cache_mode:
             with open(Path(__file__).parent / 'test_data' / 'european_option_reg_test.json', 'r') as h:
                 cached_data = json.load(h)
-            for _type, data in cached_data.items():
-                cache_in[_type] = {tuple(v['keys']): (v['analytic'], v['calculated']) for v in data}
+            for option_id, data in cached_data.items():
+                cache_in[option_id] = {tuple(v['keys']): (v['analytic'], v['calculated']) for v in data}
 
-        for (_type, option) in zip(['ITM C', 'ATM C', 'OTM C', 'OTM P', 'ATM P', 'ITM P'], calls + puts):
-            print(_type, option.strike)
-            if make_cache:
-                cached_out[_type] = []
+        for (option_id, option) in zip(['ITM C', 'ATM C', 'OTM C', 'OTM P', 'ATM P', 'ITM P'], calls + puts):
+            print(option_id, option.strike)
+            if cache_mode:
+                cached_out[option_id] = []
             for n in sizes:
                 print(f'Size: {n}')
                 for concentrating, weak_bc in modes:
@@ -105,18 +105,18 @@ class TestEuropeanOption(unittest.TestCase):
                     print(
                         f'Expected {expected:10.6f}, Calculated: {calculated:10.6f}, Error: {err:10.6f}, RelError: {rel_err:10.6f}, time: {cal_time:2.2f}, concentrating: {concentrating}, weak_bc: {weak_bc}')
 
-                    if make_cache:
+                    if cache_mode:
                         keys = [n, concentrating, weak_bc]
-                        cached_out[_type].append(
+                        cached_out[option_id].append(
                             {'keys': keys, 'analytic': round(expected, 8), 'calculated': round(calculated, 10)})
                     else:
                         key = (n, concentrating, weak_bc)
-                        cached_exp, cached_cal = cache_in[_type][key]
+                        cached_exp, cached_cal = cache_in[option_id][key]
                         self.assertLess(abs(cached_exp - expected) / cached_exp, 1e-3,
                                         msg=f'Expected analytic: {cached_exp}, analytic: {expected}')
                         self.assertLess(abs(cached_cal - calculated), 0.1,
                                         msg=f'Expected calculated: {cached_cal}, calculated: {calculated}')
-        if make_cache:
+        if cache_mode:
             with open('european_option_reg_test.json', 'w') as h:
                 json.dump(cached_out, h, indent=4)
 
@@ -146,8 +146,9 @@ class TestEuropeanOption(unittest.TestCase):
         ql_option.setPricingEngine(ql.AnalyticEuropeanEngine(bs_process))
 
         if PLOT:
-            s_plt = np.linspace(option_data.strike * math.exp(transform_h.x_min_coord) + 1e-14,
-                                option_data.strike * math.exp(transform_h.x_max_coord) - 1e-14, 100)
+            spot_eps = 1e-14
+            s_plt = np.linspace(option_data.strike * math.exp(transform_h.x_min_coord) + spot_eps,
+                                option_data.strike * math.exp(transform_h.x_max_coord) - spot_eps, 100)
             u_exact = []
             for s in s_plt:
                 spot_quote.setValue(s)

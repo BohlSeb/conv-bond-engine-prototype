@@ -70,6 +70,9 @@ class BSTransformHelper:
         return self._kappa
 
 
+INFLOW_DIRECTION_TOL = 1e-14
+
+
 class EuropeanOptionBCs:
 
     def __init__(self,
@@ -90,6 +93,10 @@ class EuropeanOptionBCs:
             boundary = self._boundary_h.y_min()
             g = self._w_put_xmin(1.0)
         return ConstDirichletBC(boundary, self._points, g)
+
+    def bc_zero_strong(self, option_type: int) -> ConstDirichletBC:
+        boundary = self._boundary_h.y_min() if option_type == ql.Option.Call else self._boundary_h.y_max()
+        return ConstDirichletBC(boundary, self._points, Constant(0.0))
 
     def bc_nonzero_weak(self, option_type: int) -> ConstRobinBC:
         """
@@ -130,11 +137,6 @@ class EuropeanOptionBCs:
             neumann_beta=Constant(beta)
         )
 
-    def bc_zero_strong(self, option_type: int) -> ConstDirichletBC:
-        boundary = self._boundary_h.y_min() if option_type == ql.Option.Call else self._boundary_h.y_max()
-        return ConstDirichletBC(boundary, self._points, Constant(0.0))
-
-    # currently not used
     def bc_outflow_neumann0(self) -> ConstRobinBC:
         boundary, _ = self._outflow_edge()
         return ConstRobinBC(
@@ -145,16 +147,6 @@ class EuropeanOptionBCs:
             neumann_beta=Constant(1.0)
         )
 
-    def bc_zero_weak(self, option_type: int) -> ConstDirichletBC:
-        boundary, n_x = self._outflow_edge()
-        if option_type == ql.Option.Call and n_x > 0:
-            g = self._w_call_xmax(1.0)
-        elif option_type == ql.Option.Put and n_x < 0:
-            g = self._w_put_xmin(1.0)
-        else:
-            g = Constant(0.0)
-        return ConstDirichletBC(boundary, self._points, g)
-
     def bc_maturity(self, option_type: int) -> ConstDirichletBC:
         bc = self._boundary_h.x_min()
         if option_type == ql.Option.Call:
@@ -164,14 +156,12 @@ class EuropeanOptionBCs:
         return ConstDirichletBC(bc, self._points, g)
 
     def _inflow_edge(self) -> tuple[NDArray[np.int64], float]:  # return inflow edge and outward normal
-        tol = 1e-14
-        if self._transform_h.beta_y() > tol:
+        if self._transform_h.beta_y() > INFLOW_DIRECTION_TOL:
             return self._boundary_h.y_min(), -1.0
         return self._boundary_h.y_max(), 1.0
 
     def _outflow_edge(self) -> tuple[NDArray[np.int64], float]:
-        tol = 1e-14
-        if self._transform_h.beta_y() > tol:
+        if self._transform_h.beta_y() > INFLOW_DIRECTION_TOL:
             return self._boundary_h.y_max(), 1.0
         return self._boundary_h.y_min(), -1.0
 
