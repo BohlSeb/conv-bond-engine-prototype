@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 class FEMAssembler:
     """
-    Assemble global FEM matrices (stiffness, mass, convection) from triangle elements.
+    Assemble global FEM matrices (stiffness, mass, convection, SUPG stabilization) from triangle elements.
     """
 
     def __init__(self, elements: LinearTriElements):
