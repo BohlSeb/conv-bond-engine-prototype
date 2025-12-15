@@ -12,17 +12,13 @@ import QuantLib as ql
 
 from typing import TYPE_CHECKING, Any
 
-from finite_elements.interval import ConcentratingInterval
-from finite_elements.triangulation import DelaunayMesh2D
-from finite_elements.elements import LinearTriElements
-from finite_elements.assembler import FEMAssembler
-from finite_elements.boundary import RectangleHelper
-from option.european import MarketData, OptionData, BSTransformHelper, EuropeanOptionBCs
+from option.european import MarketData, OptionData, ModelParams
+from option.european_calculator import fe_european_vanilla
 
 from test.utils import plot_solution
 
 if TYPE_CHECKING:
-    from numpy.typing import NDArray
+    from option.european_calculator import FEVanillaResult
 
 PLOT = False
 
@@ -40,9 +36,9 @@ class TestEuropeanOption(unittest.TestCase):
         market_data = MarketData(spot=100.0, sigma=0.2, r=0.02, q=0.025)
         option_data = OptionData(val_date=today, period2mat=ql.Period('4Y'), strike=90.0, cal=ql.TARGET(),
                                  dc=ql.Actual365Fixed(), put_call=ql.Option.Call)
-        size = 50
-        res, exact = self._do_test_european_option(option_data, market_data, size, concentrating=True,
-                                                   weak_boundary=False)
+        params = ModelParams(size=50, concentrating=True, flux_boundary_bc=False)
+        result = fe_european_vanilla(option_data, market_data, params)
+        res, exact = self._compare_analytic(option_data, market_data, params, result)
         print(
             f'Testing European Call Option: analytic {exact:4.2f}, calculated {res:4.2f}, error: {(res - exact) / exact:2.6f}')
 
@@ -51,9 +47,9 @@ class TestEuropeanOption(unittest.TestCase):
         market_data = MarketData(spot=100.0, sigma=0.2, r=0.02, q=0.025)
         option_data = OptionData(val_date=today, period2mat=ql.Period('4Y'), strike=110.0, cal=ql.TARGET(),
                                  dc=ql.Actual365Fixed(), put_call=ql.Option.Put)
-        size = 50
-        res, exact = self._do_test_european_option(option_data, market_data, size, concentrating=False,
-                                                   weak_boundary=False)
+        params = ModelParams(size=50, concentrating=True, flux_boundary_bc=False)
+        result = fe_european_vanilla(option_data, market_data, params)
+        res, exact = self._compare_analytic(option_data, market_data, params, result)
         print(
             f'Testing European Put Option: analytic {exact:4.2f}, calculated {res:4.2f}, error: {(res - exact) / exact:2.6f}')
 
@@ -95,10 +91,10 @@ class TestEuropeanOption(unittest.TestCase):
             for n in sizes:
                 print(f'Size: {n}')
                 for concentrating, weak_bc in modes:
+                    params = ModelParams(size=n, concentrating=concentrating, flux_boundary_bc=weak_bc)
                     start = timer()
-                    calculated, expected = self._do_test_european_option(option, market_data, n,
-                                                                         concentrating=concentrating,
-                                                                         weak_boundary=weak_bc)
+                    result = fe_european_vanilla(option, market_data, params)
+                    calculated, expected = self._compare_analytic(option, market_data, params, result)
                     cal_time = timer() - start
                     err = calculated - expected
                     rel_err = err / expected
@@ -123,16 +119,12 @@ class TestEuropeanOption(unittest.TestCase):
     @staticmethod
     def _compare_analytic(option_data: OptionData,
                           market_data: MarketData,
-                          elements: LinearTriElements,
-                          boundary_h: RectangleHelper,
-                          transform_h: BSTransformHelper,
-                          u_approx: NDArray[np.float64],
-                          concentrating: bool,
-                          robin_boundary: bool) -> tuple[float, float]:
+                          model_params: ModelParams,
+                          result: FEVanillaResult) -> tuple[float, float]:
         if PLOT:
-            plot_solution(elements,
-                          u_approx,
-                          title=f"European {'Call' if option_data.put_call == ql.Option.Call else 'Put'} Option FEM Solution, {concentrating = }, {robin_boundary = }")
+            plot_solution(result.elements,
+                          result.w_solution,
+                          title=f"European {'Call' if option_data.put_call == ql.Option.Call else 'Put'} Option FEM Solution, {model_params.concentrating = }, {model_params.flux_boundary_bc = }")
         ql_option = ql.EuropeanOption(ql.PlainVanillaPayoff(option_data.put_call, option_data.strike),
                                       ql.EuropeanExercise(option_data.expiry()))
         spot_quote = ql.SimpleQuote(0.0)
@@ -145,21 +137,16 @@ class TestEuropeanOption(unittest.TestCase):
         )
         ql_option.setPricingEngine(ql.AnalyticEuropeanEngine(bs_process))
 
-        t_max = boundary_h.x_max()
-        log_s_k = elements.points()[t_max][:, 1]
-        u_intp = ql.LinearInterpolation(log_s_k.tolist(), u_approx[t_max].tolist())
-
         if PLOT:
             spot_eps = 1e-14
-            s_plt = np.linspace(option_data.strike * math.exp(transform_h.x_min()) + spot_eps,
-                                option_data.strike * math.exp(transform_h.x_max()) - spot_eps, 100)
+            s_plt = np.linspace(option_data.strike * math.exp(result.transform_helper.x_min()) + spot_eps,
+                                option_data.strike * math.exp(result.transform_helper.x_max()) - spot_eps, 100)
             u_exact = []
             u_approx = []
             for s in s_plt:
                 spot_quote.setValue(s)
                 u_exact.append(ql_option.NPV())
-                x = math.log(s / option_data.strike)
-                u_approx.append(u_intp(x) * option_data.strike)
+                u_approx.append(result.npv(s))
             plt.plot(s_plt, u_exact, label='Analytical Solution', color='black')
             plt.plot(s_plt, u_approx, 'r--', label='FEM Solution at t=0')
             plt.legend()
@@ -168,58 +155,5 @@ class TestEuropeanOption(unittest.TestCase):
 
         spot_quote.setValue(market_data.spot)
         exact = ql_option.NPV()
-        return u_intp(math.log(market_data.spot / option_data.strike)) * option_data.strike, exact
-
-    def _do_test_european_option(self,
-                                 option_data: OptionData,
-                                 market_data: MarketData,
-                                 size: int,
-                                 concentrating: bool = False,
-                                 weak_boundary: bool = False) -> tuple[float, float]:
-
-        std_devs = 6
-        transform_helper = BSTransformHelper(market_data, option_data, std_devs=std_devs)
-
-        beta = size * 1e-4
-        i_x = np.linspace(0.0, option_data.time2maturity(), size)
-        if concentrating:
-            i_y = np.array(ConcentratingInterval(transform_helper._x_min,
-                                                 transform_helper._x_max,
-                                                 size,
-                                                 0.0,
-                                                 beta).grid())
-        else:
-            i_y = np.linspace(transform_helper._x_min, transform_helper._x_max, size)
-        # TODO: Consider refining the mesh or adjusting the grid spacing in i_y so that all triangles
-        # in the Delaunay triangulation have a minimum angle above a specified threshold (e.g., 20 degrees).
-        # This helps prevent poorly shaped (sliver) triangles, which can negatively affect numerical accuracy.
-        # To implement: add a mesh quality check after mesh generation, and if any triangle has an angle
-        # below the threshold, refine the mesh or adjust the interval accordingly.
-
-        grid = DelaunayMesh2D(i_x, i_y)
-        elements = LinearTriElements(grid.points(), grid.triangles(), grid.areas())
-        rectangle_helper = RectangleHelper(elements.points())
-
-        assembler = FEMAssembler(elements)
-
-        lhs = assembler.assemble_stiffness(diffusion_tensor=transform_helper._a).copy()
-        lhs += assembler.assemble_convection(weight_x=lambda _x, _y: transform_helper.beta()[0],
-                                             weight_y=lambda _x, _y: transform_helper.beta()[1])
-        lhs += transform_helper._mass * assembler.assemble_mass()
-
-        rhs = np.zeros_like(elements.points()[:, 0])
-
-        bc = EuropeanOptionBCs(market_data, transform_helper, rectangle_helper, elements.points())
-        p_c = option_data.put_call
-        if weak_boundary:
-            bc.bc_nonzero_weak(p_c).apply(lhs, rhs)
-            bc.bc_outflow_neumann0().apply(lhs, rhs)
-        else:
-            bc.bc_nonzero_strong(p_c).apply(lhs, rhs)
-            bc.bc_zero_strong(p_c).apply(lhs, rhs)
-        bc.bc_maturity(p_c).apply(lhs, rhs)
-        u = np.linalg.solve(lhs.toarray(), rhs)
-        approx, exact = self._compare_analytic(option_data, market_data, elements, rectangle_helper, transform_helper, u,
-                                               concentrating,
-                                               weak_boundary)
+        approx = result.npv(spot_quote.value())
         return approx, exact

@@ -4,12 +4,18 @@ import unittest
 
 import numpy as np
 
-from finite_elements.boundary import ConstRobinBC
 from finite_elements.functions import Scalar, Constant
 from finite_elements.triangulation import DelaunayMesh2D
 from finite_elements.elements import LinearTriElements
 from finite_elements.assembler import FEMAssembler
-from finite_elements.boundary import RectangleHelper, ConstDirichletBC, ConstNeumannBC
+from finite_elements.boundary import (
+    RectangleHelper,
+    ConstDirichletBC,
+    ConstNeumannBC,
+    ConstRobinBC,
+    apply_dirichlet_sparse,
+    merge_dirichlet_last_wins
+)
 
 from test.utils import plot_solution
 
@@ -41,7 +47,7 @@ class BoundaryConditionTest(unittest.TestCase):
         assembler = FEMAssembler(elements)
         lhs = assembler.assemble_stiffness()
         rhs = np.zeros(elements.points().shape[0])
-        linear_condition.apply(lhs, rhs)
+        lhs, rhs = apply_dirichlet_sparse(lhs, rhs, linear_condition.data())
         u = np.linalg.solve(lhs.toarray(), rhs)
         u_expected = test_condition_linear(elements.points()[:, 0], elements.points()[:, 1])
         np.testing.assert_allclose(u, u_expected, atol=1e-14)
@@ -57,7 +63,7 @@ class BoundaryConditionTest(unittest.TestCase):
         assembler = FEMAssembler(elements)
         lhs_f = assembler.assemble_stiffness()
         rhs_f = assembler.assemble_mass().toarray() @ f
-        linear_condition.apply(lhs_f, rhs_f)
+        lhs_f, rhs_f = apply_dirichlet_sparse(lhs_f, rhs_f, linear_condition.data())
         u_approx_f = np.linalg.solve(lhs_f.toarray(), rhs_f)
         if PLOT:
             plot_solution(elements, u_approx_f, "laplace u = 10 with trig. Dirichlet BC")
@@ -72,7 +78,7 @@ class BoundaryConditionTest(unittest.TestCase):
         assembler = FEMAssembler(elements)
         lhs_f = assembler.assemble_stiffness()
         rhs_f = assembler.assemble_mass().toarray() @ f
-        trig_condition.apply(lhs_f, rhs_f)
+        lhs_f, rhs_f = apply_dirichlet_sparse(lhs_f, rhs_f, trig_condition.data())
         u_approx_f = np.linalg.solve(lhs_f.toarray(), rhs_f)
         if PLOT:
             plot_solution(elements, u_approx_f, "laplace u = trigonometric f with linear Dirichlet BC")
@@ -88,9 +94,8 @@ class BoundaryConditionTest(unittest.TestCase):
         lhs = assembler.assemble_stiffness()
         rhs = np.zeros(elements.points().shape[0])
         neumann.apply(rhs)
-        dirichlet_1.apply(lhs, rhs)
-        dirichlet_2.apply(lhs, rhs)
-        dirichlet_3.apply(lhs, rhs)
+        dirichlet_data = merge_dirichlet_last_wins([bc.data() for bc in [dirichlet_1, dirichlet_2, dirichlet_3]])
+        lhs, rhs = apply_dirichlet_sparse(lhs, rhs, dirichlet_data)
         u_approx = np.linalg.solve(lhs.toarray(), rhs)
         if PLOT:
             plot_solution(elements, u_approx, "laplace u = 0, with Neumann for x_min and linear Dirichlet elsewhere")

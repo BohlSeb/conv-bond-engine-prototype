@@ -9,12 +9,12 @@ from finite_elements.interval import ConcentratingInterval
 from finite_elements.triangulation import DelaunayMesh2D
 from finite_elements.elements import LinearTriElements
 from finite_elements.assembler import FEMAssembler
-from finite_elements.boundary import RectangleHelper, ConstDirichletBC, ConstRobinBC
+from finite_elements.boundary import RectangleHelper, ConstDirichletBC, ConstRobinBC, merge_dirichlet_last_wins, \
+    apply_dirichlet_sparse
 
 from test.utils import plot_solution
 
 PLOT = False
-
 
 class TestConvection(unittest.TestCase):
 
@@ -51,16 +51,22 @@ class TestConvection(unittest.TestCase):
         elements = LinearTriElements(mesh.points(), mesh.triangles(), mesh.areas())
         b_help = RectangleHelper(elements.points())
 
-        bc_left = ConstDirichletBC(b_help.x_min(), elements.points(), Constant(g))
+        dirichlet_bcs = []
+        robin_bcs = []
 
+        # left
+        dirichlet_bcs.append(ConstDirichletBC(b_help.x_min(), elements.points(), Constant(g)))
+
+        # right
         if not weak_dirichlet:
-            bc_right = ConstDirichletBC(b_help.x_max(), elements.points(), Constant(0.0))
+            dirichlet_bcs.append(ConstDirichletBC(b_help.x_max(), elements.points(), Constant(0.0)))
         else:
             bc_right = ConstRobinBC(b_help.x_max(),
                                     elements.points(),
                                     Constant(0.0 * kappa),  # rhs
                                     Constant(kappa),  # "dirichlet alpha"
                                     Constant(1))  # "neumann beta"
+            robin_bcs.append(bc_right)
 
         bc_top = ConstRobinBC(b_help.y_max(),
                               elements.points(),
@@ -72,6 +78,8 @@ class TestConvection(unittest.TestCase):
                                  Constant(0.0),
                                  Constant(0.0),
                                  Constant(kappa))
+        robin_bcs.append(bc_top)
+        robin_bcs.append(bc_bottom)
 
         assembler = FEMAssembler(elements)
 
@@ -87,8 +95,10 @@ class TestConvection(unittest.TestCase):
         # See: https://docs.scipy.org/doc/scipy/reference/sparse.html for details on sparse matrix formats.
         lhs = (kappa * lhs_stiff.tocsr() + lhs_conv.tocsr()).tolil()
 
-        for bc in [bc_top, bc_bottom, bc_right, bc_left]:
-            bc.apply(lhs, rhs)
+        for robin_bc in robin_bcs:
+            robin_bc.apply(lhs, rhs)
+        dirichlet_data = merge_dirichlet_last_wins([bc.data() for bc in dirichlet_bcs])
+        lhs, rhs = apply_dirichlet_sparse(lhs, rhs, dirichlet_data)
         u_approx = np.linalg.solve(lhs.toarray(), rhs)
         if PLOT:
             import QuantLib as ql
