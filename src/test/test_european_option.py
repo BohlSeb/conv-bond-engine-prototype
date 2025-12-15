@@ -58,7 +58,12 @@ class TestEuropeanOption(unittest.TestCase):
             f'Testing European Put Option: analytic {exact:4.2f}, calculated {res:4.2f}, error: {(res - exact) / exact:2.6f}')
 
     def test_european_option(self, make_cache: bool = False) -> None:
-        assert not PLOT
+        if PLOT:
+            raise RuntimeError(
+                "PLOT=True detected during test execution. "
+                "Plotting should not be enabled in CI/CD or automated test runs. "
+                "Set PLOT=False to run tests."
+            )
         print('Testing european vanilla option with different modes...')
         today = self.setup()
         sizes = [25, 50, 75]
