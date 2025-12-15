@@ -81,7 +81,11 @@ class TestConvection(unittest.TestCase):
         lhs_stiff = assembler.assemble_stiffness()
         lhs_conv = assembler.assemble_convection(weight_x=lambda _x, _y: dirichlet_beta[0],
                                                  weight_y=lambda _x, _y: dirichlet_beta[1])
-        lhs = (kappa * lhs_stiff.tocsr() + lhs_conv.tocsr()).tolil()  # todo: figure out which matrix formats to use when and where
+        # Note: We convert both lhs_stiff and lhs_conv to CSR format for efficient arithmetic,
+        # then convert the result to LIL format for efficient modification (e.g., applying boundary conditions).
+        # If performance or memory usage becomes an issue, revisit the choice of formats here.
+        # See: https://docs.scipy.org/doc/scipy/reference/sparse.html for details on sparse matrix formats.
+        lhs = (kappa * lhs_stiff.tocsr() + lhs_conv.tocsr()).tolil()
 
         for bc in [bc_top, bc_bottom, bc_right, bc_left]:
             bc.apply(lhs, rhs)
