@@ -103,8 +103,8 @@ def apply_dirichlet_sparse(
 
     Steps:
       1) b <- b - A[:,idx] @ g        (remove known contribution)
-      2) zero rows idx; set diag=1; b[idx]=g
-      3) if make_symmetric: also zero columns idx (keeps symmetry/SPD when applicable)
+      2) if make_symmetric: zero columns idx (keeps symmetry/SPD when applicable)
+      3) zero rows idx; set diag=1; b[idx]=g
     """
     where = np.asarray(data[0], dtype=np.int64)
     values = np.asarray(data[1], dtype=np.float64)
