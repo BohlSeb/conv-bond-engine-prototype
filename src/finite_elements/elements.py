@@ -81,7 +81,7 @@ class LinearTriElements(TriangleElements):
              kappa_eff: float,
              reaction: float = 0.0) -> NDArray[np.float64]:
         """
-        "Streamline upwind Petrov–Galerkin pressure-stabilizing" (SUPG)
+        Streamline Upwind Petrov–Galerkin (SUPG) convection stabilization term.
         Local term for P1 triangles:
 
             ∫_T τ (β·∇φ_i)(β·∇φ_j) dA
