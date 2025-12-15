@@ -33,10 +33,10 @@ class TestEuropeanOption(unittest.TestCase):
 
     def test_european_call_option(self) -> None:
         today = self.initialize_today()
-        market_data = MarketData(spot=100.0, sigma=0.2, r=0.02, q=0.025)
+        market_data = MarketData(spot=100.0, sigma=0.05, r=0.1, q=0.0)
         option_data = OptionData(val_date=today, period2mat=ql.Period('4Y'), strike=90.0, cal=ql.TARGET(),
                                  dc=ql.Actual365Fixed(), put_call=ql.Option.Call)
-        params = ModelParams(size=50, concentrating=True, flux_boundary_bc=False)
+        params = ModelParams(size=25, concentrating=False, flux_boundary_bc=False, use_supg=False, std_devs=6)
         result = fe_european_vanilla(option_data, market_data, params)
         res, exact = self._compare_analytic(option_data, market_data, params, result)
         print(
@@ -44,10 +44,10 @@ class TestEuropeanOption(unittest.TestCase):
 
     def test_european_put_option(self) -> None:
         today = self.initialize_today()
-        market_data = MarketData(spot=100.0, sigma=0.2, r=0.02, q=0.025)
+        market_data = MarketData(spot=100.0, sigma=0.3, r=0.02, q=0.025)
         option_data = OptionData(val_date=today, period2mat=ql.Period('4Y'), strike=110.0, cal=ql.TARGET(),
                                  dc=ql.Actual365Fixed(), put_call=ql.Option.Put)
-        params = ModelParams(size=50, concentrating=True, flux_boundary_bc=False)
+        params = ModelParams(size=25, concentrating=False, flux_boundary_bc=False)
         result = fe_european_vanilla(option_data, market_data, params)
         res, exact = self._compare_analytic(option_data, market_data, params, result)
         print(
@@ -91,7 +91,7 @@ class TestEuropeanOption(unittest.TestCase):
             for n in sizes:
                 print(f'Size: {n}')
                 for concentrating, weak_bc in modes:
-                    params = ModelParams(size=n, concentrating=concentrating, flux_boundary_bc=weak_bc)
+                    params = ModelParams(size=n, concentrating=concentrating, flux_boundary_bc=weak_bc, use_supg=False)
                     start = timer()
                     result = fe_european_vanilla(option, market_data, params)
                     calculated, expected = self._compare_analytic(option, market_data, params, result)

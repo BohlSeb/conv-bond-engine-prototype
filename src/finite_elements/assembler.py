@@ -6,7 +6,7 @@ from typing import Callable, TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
     from numpy.typing import NDArray
-    from src.finite_elements.elements import TriangleElements
+    from src.finite_elements.elements import LinearTriElements
 
 
 class FEMAssembler:
@@ -14,7 +14,7 @@ class FEMAssembler:
     Assemble global FEM matrices (stiffness, mass, convection) from triangle elements.
     """
 
-    def __init__(self, elements: TriangleElements):
+    def __init__(self, elements: LinearTriElements):
         self._el = elements
 
     def assemble_stiffness(self,
@@ -80,3 +80,45 @@ class FEMAssembler:
                 for j_local, j_global in enumerate(i_tri_vertices):
                     global_conv[i_global, j_global] += local_conv[i_local, j_local]
         return global_conv
+
+    def assemble_supg(self,
+                      beta_x: Callable[[float, float], float],
+                      beta_y: Callable[[float, float], float],
+                      diffusion_tensor: NDArray[np.float64],
+                      reaction: float = 0.0) -> lil_matrix:
+        """
+        Assemble global SUPG stabilization matrix:
+            Σ_e ∫_Te τ (β·∇φ_i)(β·∇φ_j) dA
+
+        diffusion_tensor is used only to derive κ_eff along the streamline.
+        """
+        if diffusion_tensor.shape != (2, 2):
+            raise ValueError(f"diffusion_tensor must be (2,2), got {diffusion_tensor.shape}")
+
+        n = self._el.points().shape[0]
+        global_supg = lil_matrix((n, n), dtype=np.float64)
+
+        a_mat = diffusion_tensor.astype(np.float64, copy=False)
+
+        for i_tri in range(self._el.triangles().shape[0]):
+            vertices = self._el.triangles()[i_tri]
+            xy = self._el.points()[vertices].mean(axis=0)
+
+            bx = float(beta_x(xy[0], xy[1]))
+            by = float(beta_y(xy[0], xy[1]))
+
+            beta = np.array([bx, by], dtype=np.float64)
+            beta_norm_sq = float(beta @ beta)
+
+            if beta_norm_sq < 1e-28:
+                continue
+
+            # κ_eff = (β^T A β) / (β^T β)
+            kappa_eff = float(beta @ (a_mat @ beta)) / beta_norm_sq
+            local_supg = self._el.supg(i_tri, (bx, by), kappa_eff=kappa_eff, reaction=reaction)
+
+            for i_local, i_global in enumerate(vertices):
+                for j_local, j_global in enumerate(vertices):
+                    global_supg[i_global, j_global] += local_supg[i_local, j_local]
+
+        return global_supg

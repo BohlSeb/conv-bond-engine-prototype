@@ -74,3 +74,46 @@ class LinearTriElements(TriangleElements):
         b = self._b[tri_index]
         c = self._c[tri_index]
         return 1 / 6.0 * np.outer(np.ones(3), weight_x * b + weight_y * c)
+
+    def supg(self,
+             tri_index: int,
+             beta: tuple[float, float],
+             kappa_eff: float,
+             reaction: float = 0.0) -> NDArray[np.float64]:
+        """
+        "Streamline upwind Petrov–Galerkin pressure-stabilizing" (SUPG)
+        Local term for P1 triangles:
+
+            ∫_T τ (β·∇φ_i)(β·∇φ_j) dA
+
+        using b,c coefficients where ∇φ_i = (b_i, c_i) / (2A).
+        """
+        bx, by = beta
+        area = self._areas[tri_index]
+        b_i = self._b[tri_index]
+        c_i = self._c[tri_index]
+
+        # d_i = βx*b_i + βy*c_i  (note: beta·∇φ_i = d_i / (2A))
+        d = bx * b_i + by * c_i
+
+        beta_norm = float(np.hypot(bx, by))
+        if beta_norm < 1e-14:
+            return np.zeros((3, 3), dtype=np.float64)
+
+        # streamline element length:
+        # h = 2|β| / Σ|β·∇φ_i|
+        # with β·∇φ_i = d_i/(2A)  =>  h = 4A|β| / Σ|d_i|
+        denominator = float(np.sum(np.abs(d)))
+        if denominator < 1e-14:
+            return np.zeros((3, 3), dtype=np.float64)
+        h = 4.0 * area * beta_norm / denominator
+
+        # tau choice (robust):
+        # tau = 1/sqrt((2|β|/h)^2 + (4κ/h^2)^2 + r^2)
+        inv_tau_sq = (2.0 * beta_norm / h) ** 2 + (4.0 * kappa_eff / (h * h)) ** 2
+        if reaction != 0.0:
+            inv_tau_sq += reaction ** 2
+        tau = 1.0 / np.sqrt(inv_tau_sq)
+
+        # SUPG matrix: tau/(4A) * d d^T
+        return (tau / (4.0 * area)) * np.outer(d, d)
