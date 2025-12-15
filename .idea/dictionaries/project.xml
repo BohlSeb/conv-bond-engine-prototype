@@ -3,6 +3,8 @@
     <words>
       <w>coeffs</w>
       <w>irreg</w>
+      <w>xmax</w>
+      <w>xmin</w>
     </words>
   </dictionary>
 </component>

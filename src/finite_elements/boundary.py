@@ -59,7 +59,7 @@ class ConstBoundaryBC:
 
 
 # This condition can be applied for any subset of the boundary
-class ConstStrongDirichletBC(ConstBoundaryBC):
+class ConstDirichletBC(ConstBoundaryBC):
 
     # modifies input
     def apply(self, matrix: lil_matrix[np.float64], rhs: NDArray[np.float64], zero_diagonal: bool = False) -> None:

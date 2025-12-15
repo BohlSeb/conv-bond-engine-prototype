@@ -2,9 +2,10 @@ from __future__ import annotations
 import numpy as np
 from scipy.sparse import lil_matrix
 
-from typing import Callable, TYPE_CHECKING
+from typing import Callable, TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
+    from numpy.typing import NDArray
     from src.finite_elements.elements import TriangleElements
 
 
@@ -16,8 +17,15 @@ class FEMAssembler:
     def __init__(self, elements: TriangleElements):
         self._el = elements
 
-    def assemble_stiffness(self, weights: Callable[[float, float], float] | None = None) -> lil_matrix:
+    def assemble_stiffness(self,
+                           weights: Callable[[float, float], float] | None = None,
+                           diffusion_tensor: Optional[NDArray[np.float64]] = None) -> lil_matrix:
         # lil_matrix: "list of lists" sparse matrix for efficient construction / modification
+        if diffusion_tensor is not None:
+            if diffusion_tensor.shape != (2, 2):
+                raise ValueError(f'Diffusion tensor must be of shape (2, 2), got {diffusion_tensor.shape}')
+        else:
+            diffusion_tensor = np.eye(2, dtype=np.float64)
         n = self._el.points().shape[0]
         global_stiff = lil_matrix((n, n), dtype=np.float64)
         for i_tri in range(self._el.triangles().shape[0]):
@@ -28,7 +36,7 @@ class FEMAssembler:
                 xy = self._el.points()[i_tri_vertices].mean(axis=0)
                 weight = weights(xy[0], xy[1])
 
-            local_stiffness = self._el.stiffness(i_tri, weight=weight)
+            local_stiffness = self._el.stiffness(i_tri, weight, diffusion_tensor)
 
             for i_local, i_global in enumerate(i_tri_vertices):
                 for j_local, j_global in enumerate(i_tri_vertices):
@@ -45,7 +53,7 @@ class FEMAssembler:
                 xy = self._el.points()[i_tri_vertices].mean(axis=0)
                 weight = weights(xy[0], xy[1])
 
-            local_mass = self._el.mass(i_tri, weight=weight)
+            local_mass = self._el.mass(i_tri, weight)
 
             for i_local, i_global in enumerate(i_tri_vertices):
                 for j_local, j_global in enumerate(i_tri_vertices):
@@ -66,7 +74,7 @@ class FEMAssembler:
             if weight_y is not None:
                 w_y = weight_y(xy[0], xy[1])
 
-            local_conv = self._el.convection(i_tri, weight_x=w_x, weight_y=w_y)
+            local_conv = self._el.convection(i_tri, (w_x, w_y))
 
             for i_local, i_global in enumerate(i_tri_vertices):
                 for j_local, j_global in enumerate(i_tri_vertices):
