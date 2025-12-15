@@ -47,7 +47,7 @@ def fe_european_vanilla(option_data: OptionData, market_data: MarketData, model_
     i_x = np.linspace(0.0, option_data.time2maturity(), model_params.size)
 
     if model_params.concentrating:
-        beta = model_params.size * 1e-4  # todo: Find good concentrating beta
+        beta = model_params.size * 1e-4  # TODO: Find good concentrating beta
         i_y = np.array(ConcentratingInterval(transform_h.x_min(),
                                              transform_h.x_max(),
                                              model_params.size,
