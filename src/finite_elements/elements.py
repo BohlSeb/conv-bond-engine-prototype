@@ -34,10 +34,10 @@ class TriangleElements:
         raise NotImplementedError
 
     def convection(self, tri_index: int, weights: tuple[float, float]) -> NDArray[np.float64]:
-        # assert convection_tensor.shape == (2,1)
-        # 2x1 convection tensor, examples:
-        # np.array([1.0, 0.0]) <=> u_x
-        # np.array([0.0, 1.0]) <=> u_y
+        # weights: tuple of (weight_x, weight_y) for convection in x and y directions
+        # Examples:
+        # weights = (1.0, 0.0) <=> u_x
+        # weights = (0.0, 1.0) <=> u_y
         raise NotImplementedError
 
 
