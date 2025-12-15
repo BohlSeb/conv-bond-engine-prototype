@@ -69,12 +69,11 @@ class ConstDirichletBC(ConstBoundaryBC):
 
 
 def merge_dirichlet_last_wins(data: list[DirichletDataT], debug_overwrite: bool = True) -> DirichletDataT:
+    if not data:
+        # Return empty arrays with correct dtypes and shapes
+        return np.array([], dtype=np.int64), np.array([], dtype=np.float64)
     idx_all = np.concatenate([np.asarray(idx, dtype=np.int64) for idx, _ in data])
     g_all = np.concatenate([np.asarray(g, dtype=np.float64) for _, g in data])
-
-    if idx_all.shape[0] != g_all.shape[0]:
-        raise ValueError("idx and g total lengths do not match")
-
     # reverse arrays so "last wins" becomes "first occurrence"
     idx_rev = idx_all[::-1]
     g_rev = g_all[::-1]
