@@ -188,7 +188,11 @@ class TestEuropeanOption(unittest.TestCase):
             i_y = np.array(ConcentratingInterval(tf_helper.x_min_coord, tf_helper.x_max_coord, size, 0.0, beta).grid())
         else:
             i_y = np.linspace(tf_helper.x_min_coord, tf_helper.x_max_coord, size)
-        # todo: fill up one interval until a desired minimum triangle angle is reached?
+        # TODO: Consider refining the mesh or adjusting the grid spacing in i_y so that all triangles
+        # in the Delaunay triangulation have a minimum angle above a specified threshold (e.g., 20 degrees).
+        # This helps prevent poorly shaped (sliver) triangles, which can negatively affect numerical accuracy.
+        # To implement: add a mesh quality check after mesh generation, and if any triangle has an angle
+        # below the threshold, refine the mesh or adjust the interval accordingly.
 
         grid = DelaunayMesh2D(i_x, i_y)
         tris = LinearTriElements(grid.points(), grid.triangles(), grid.areas())
