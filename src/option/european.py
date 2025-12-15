@@ -35,6 +35,14 @@ class OptionData:
         return self.cal.advance(self.val_date, self.period2mat)
 
 
+@dataclass
+class ModelParams:
+    size: int
+    concentrating: bool = True
+    flux_boundary_bc: bool = False
+    std_devs: int = 6
+
+
 class BSTransformHelper:
     """
     Black–Scholes space–time transformation helper.

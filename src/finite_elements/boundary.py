@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 import numpy as np
-from scipy.sparse import coo_matrix
+import scipy.sparse as sp
+from numpy.typing import NDArray
 
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from numpy.typing import NDArray
     from scipy.sparse import lil_matrix
     from finite_elements.functions import Function
 
@@ -58,19 +58,85 @@ class ConstBoundaryBC:
         self._g = condition(points[self._where])
 
 
-# This condition can be applied for any subset of the boundary
+# Dirichlet condition, can be applied for any subset of the boundary
+
+DirichletDataT = tuple[NDArray[np.int64], NDArray[np.float64]]
+
 class ConstDirichletBC(ConstBoundaryBC):
 
-    # modifies input
-    def apply(self, matrix: lil_matrix[np.float64], rhs: NDArray[np.float64], zero_diagonal: bool = False) -> None:
-        for idx, g in zip(self._where, self._g):
-            matrix.rows[idx] = [idx]
-            matrix.data[idx] = [1.0]
-            rhs[idx] = g
-            if zero_diagonal:
-                for j in range(matrix.shape[0]):
-                    if j != idx:
-                        matrix[j, idx] = 0.0
+    def data(self) -> DirichletDataT:
+        return self._where, self._g
+
+
+def merge_dirichlet_last_wins(data: list[DirichletDataT], debug_overwrite: bool = True) -> DirichletDataT:
+    if not data:
+        # Return empty arrays with correct dtypes and shapes
+        return np.array([], dtype=np.int64), np.array([], dtype=np.float64)
+    idx_all = np.concatenate([np.asarray(idx, dtype=np.int64) for idx, _ in data])
+    g_all = np.concatenate([np.asarray(g, dtype=np.float64) for _, g in data])
+    # reverse arrays so "last wins" becomes "first occurrence"
+    idx_rev = idx_all[::-1]
+    g_rev = g_all[::-1]
+
+    # unique keeps *first* occurrence → corresponds to last in original order
+    uniq_idx, uniq_pos = np.unique(idx_rev, return_index=True)
+    # recover corresponding g values
+    uniq_g = g_rev[uniq_pos]
+
+    if uniq_idx.size < idx_all.size and debug_overwrite:
+        print(f'[Dirichlet merge] {idx_all.size - uniq_idx.size} overlaps resolved')
+
+    order = np.argsort(uniq_idx)
+    return uniq_idx[order], uniq_g[order]
+
+
+def apply_dirichlet_sparse(
+    left_h_side: sp.spmatrix,
+    right_h_side: np.ndarray,
+    data: DirichletDataT,
+    *,
+    make_symmetric: bool = True,
+) -> tuple[sp.csr_matrix, np.ndarray]:
+    """
+    Apply Dirichlet constraints u[idx] = g by elimination.
+
+    Steps:
+      1) b <- b - A[:,idx] @ g        (remove known contribution)
+      2) if make_symmetric: zero columns idx (keeps symmetry/SPD when applicable)
+      3) zero rows idx; set diag=1; b[idx]=g
+    """
+    where = np.asarray(data[0], dtype=np.int64)
+    values = np.asarray(data[1], dtype=np.float64)
+
+    lhs = left_h_side.tocsr(copy=True)
+    rhs = np.asarray(right_h_side, dtype=np.float64).copy()
+
+    if where.size == 0:
+        return lhs, rhs
+
+    # 1) eliminate known contribution from all equations
+    rhs -= lhs[:, where] @ values
+
+    # 2) if requested, zero columns (CSC is efficient for columns)
+    if make_symmetric:
+        lhs_c = lhs.tocsc(copy=False)
+        for k in where:
+            lhs_c.data[lhs_c.indptr[k]:lhs_c.indptr[k + 1]] = 0.0
+        lhs = lhs_c.tocsr(copy=False)
+
+    # 3) overwrite constrained rows (LIL is convenient for a few rows)
+    lhs_l = lhs.tolil(copy=False)
+    for k, val in zip(where, values):
+        lhs_l.rows[k] = [k]
+        lhs_l.data[k] = [1.0]
+        rhs[k] = val
+    lhs = lhs_l.tocsr(copy=False)
+
+    if make_symmetric:
+        # column zeroing may have wiped the diagonal; restore it
+        lhs[where, where] = 1.0
+
+    return lhs, rhs
 
 
 # This condition can be applied only for a boundary segment (left, right, top, bottom) # todo: assert this
@@ -163,7 +229,7 @@ class ConstRobinBC(ConstNeumannBCBase):
         rhs += self._assemble_contribution_rhs(rhs.shape[0])
         matrix += self._assemble_contribution_lhs(matrix.shape[0]).tolil()
 
-    def _assemble_contribution_lhs(self, size: int) -> coo_matrix:
+    def _assemble_contribution_lhs(self, size: int) -> sp.coo_matrix:
         if self._lumped:
             rows = self._where.astype(np.intp, copy=False)
             cols = self._where.astype(np.intp, copy=False)
@@ -176,4 +242,4 @@ class ConstRobinBC(ConstNeumannBCBase):
             rows = np.concatenate([i_idx, j_idx, i_idx, j_idx])
             cols = np.concatenate([i_idx, j_idx, j_idx, i_idx])
             data = np.concatenate([2 * coeffs, 2 * coeffs, coeffs, coeffs])
-        return coo_matrix((data, (rows, cols)), shape=(size, size))
+        return sp.coo_matrix((data, (rows, cols)), shape=(size, size))
