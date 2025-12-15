@@ -53,7 +53,7 @@ class LinearTriElements(TriangleElements):
         y1 = points[triangles[:, 1], 1]
         y2 = points[triangles[:, 2], 1]
 
-        # shape-function gradients coefficients
+        # shape-function gradient coefficients
         self._b = np.stack([y1 - y2, y2 - y0, y0 - y1], axis=1)
         self._c = np.stack([x2 - x1, x0 - x2, x1 - x0], axis=1)
 
