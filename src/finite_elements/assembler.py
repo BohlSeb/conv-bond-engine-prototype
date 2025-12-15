@@ -23,7 +23,7 @@ class FEMAssembler:
         # lil_matrix: "list of lists" sparse matrix for efficient construction / modification
         if diffusion_tensor is not None:
             if diffusion_tensor.shape != (2, 2):
-                raise ValueError('Diffusion tensor must be of shape (2, 2)')
+                raise ValueError(f'Diffusion tensor must be of shape (2, 2), got {diffusion_tensor.shape}')
         else:
             diffusion_tensor = np.eye(2, dtype=np.float64)
         n = self._el.points().shape[0]
