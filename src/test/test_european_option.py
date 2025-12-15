@@ -145,25 +145,22 @@ class TestEuropeanOption(unittest.TestCase):
         )
         ql_option.setPricingEngine(ql.AnalyticEuropeanEngine(bs_process))
 
-        if PLOT:
-            spot_eps = 1e-14
-            s_plt = np.linspace(option_data.strike * math.exp(transform_h.x_min_coord) + spot_eps,
-                                option_data.strike * math.exp(transform_h.x_max_coord) - spot_eps, 100)
-            u_exact = []
-            for s in s_plt:
-                spot_quote.setValue(s)
-                u_exact.append(ql_option.NPV())
-            plt.plot(s_plt, u_exact, label='Analytical Solution', color='black')
-
         t_max = boundary_h.x_max()
         log_s_k = elements.points()[t_max][:, 1]
         u_intp = ql.LinearInterpolation(log_s_k.tolist(), u_approx[t_max].tolist())
 
         if PLOT:
+            spot_eps = 1e-14
+            s_plt = np.linspace(option_data.strike * math.exp(transform_h.x_min()) + spot_eps,
+                                option_data.strike * math.exp(transform_h.x_max()) - spot_eps, 100)
+            u_exact = []
             u_approx = []
             for s in s_plt:
+                spot_quote.setValue(s)
+                u_exact.append(ql_option.NPV())
                 x = math.log(s / option_data.strike)
                 u_approx.append(u_intp(x) * option_data.strike)
+            plt.plot(s_plt, u_exact, label='Analytical Solution', color='black')
             plt.plot(s_plt, u_approx, 'r--', label='FEM Solution at t=0')
             plt.legend()
             plt.grid()
@@ -181,14 +178,18 @@ class TestEuropeanOption(unittest.TestCase):
                                  weak_boundary: bool = False) -> tuple[float, float]:
 
         std_devs = 6
-        tf_helper = BSTransformHelper(market_data, option_data, std_devs=std_devs)
+        transform_helper = BSTransformHelper(market_data, option_data, std_devs=std_devs)
 
         beta = size * 1e-4
         i_x = np.linspace(0.0, option_data.time2maturity(), size)
         if concentrating:
-            i_y = np.array(ConcentratingInterval(tf_helper.x_min_coord, tf_helper.x_max_coord, size, 0.0, beta).grid())
+            i_y = np.array(ConcentratingInterval(transform_helper._x_min,
+                                                 transform_helper._x_max,
+                                                 size,
+                                                 0.0,
+                                                 beta).grid())
         else:
-            i_y = np.linspace(tf_helper.x_min_coord, tf_helper.x_max_coord, size)
+            i_y = np.linspace(transform_helper._x_min, transform_helper._x_max, size)
         # TODO: Consider refining the mesh or adjusting the grid spacing in i_y so that all triangles
         # in the Delaunay triangulation have a minimum angle above a specified threshold (e.g., 20 degrees).
         # This helps prevent poorly shaped (sliver) triangles, which can negatively affect numerical accuracy.
@@ -196,19 +197,19 @@ class TestEuropeanOption(unittest.TestCase):
         # below the threshold, refine the mesh or adjust the interval accordingly.
 
         grid = DelaunayMesh2D(i_x, i_y)
-        tris = LinearTriElements(grid.points(), grid.triangles(), grid.areas())
-        rec_helper = RectangleHelper(tris.points())
+        elements = LinearTriElements(grid.points(), grid.triangles(), grid.areas())
+        rectangle_helper = RectangleHelper(elements.points())
 
-        assembler = FEMAssembler(tris)
+        assembler = FEMAssembler(elements)
 
-        lhs = assembler.assemble_stiffness(diffusion_tensor=tf_helper.A).copy()
-        lhs += assembler.assemble_convection(weight_x=lambda _x, _y: tf_helper.beta()[0],
-                                             weight_y=lambda _x, _y: tf_helper.beta()[1])
-        lhs += tf_helper.mass_weight * assembler.assemble_mass()
+        lhs = assembler.assemble_stiffness(diffusion_tensor=transform_helper._a).copy()
+        lhs += assembler.assemble_convection(weight_x=lambda _x, _y: transform_helper.beta()[0],
+                                             weight_y=lambda _x, _y: transform_helper.beta()[1])
+        lhs += transform_helper._mass * assembler.assemble_mass()
 
-        rhs = np.zeros_like(tris.points()[:, 0])
+        rhs = np.zeros_like(elements.points()[:, 0])
 
-        bc = EuropeanOptionBCs(market_data, tf_helper, rec_helper, tris.points())
+        bc = EuropeanOptionBCs(market_data, transform_helper, rectangle_helper, elements.points())
         p_c = option_data.put_call
         if weak_boundary:
             bc.bc_nonzero_weak(p_c).apply(lhs, rhs)
@@ -218,6 +219,7 @@ class TestEuropeanOption(unittest.TestCase):
             bc.bc_zero_strong(p_c).apply(lhs, rhs)
         bc.bc_maturity(p_c).apply(lhs, rhs)
         u = np.linalg.solve(lhs.toarray(), rhs)
-        approx, exact = self._compare_analytic(option_data, market_data, tris, rec_helper, tf_helper, u, concentrating,
+        approx, exact = self._compare_analytic(option_data, market_data, elements, rectangle_helper, transform_helper, u,
+                                               concentrating,
                                                weak_boundary)
         return approx, exact
