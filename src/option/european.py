@@ -41,6 +41,8 @@ class ModelParams:
     concentrating: bool = True
     flux_boundary_bc: bool = False
     std_devs: int = 6
+    use_supg: bool = False
+    supg_scale: float = 1.0
 
 
 class BSTransformHelper:

@@ -64,6 +64,9 @@ def fe_european_vanilla(option_data: OptionData, market_data: MarketData, model_
     lhs = assembler.assemble_stiffness(diffusion_tensor=transform_h.diffusion())
     lhs += assembler.assemble_convection(weight_x=lambda _x, _y: 1.0, weight_y=lambda _x, _y: transform_h.beta_y())
     lhs += transform_h.mass() * assembler.assemble_mass()
+    if model_params.use_supg:
+        supg = assembler.assemble_supg(lambda _x, _y: 1.0, lambda _x, _y: transform_h.beta_y(), transform_h.diffusion())
+        lhs += model_params.supg_scale * supg
     rhs = np.zeros_like(elements.points()[:, 0])
 
     robin_bcs = []
