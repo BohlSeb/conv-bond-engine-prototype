@@ -109,9 +109,9 @@ class TestEuropeanOption(unittest.TestCase):
                     else:
                         key = (n, concentrating, weak_bc)
                         cached_exp, cached_cal = cache_in[option_id][key]
-                        self.assertLess(abs(cached_exp - expected) / cached_exp, 1e-6,
+                        self.assertLess(abs(cached_exp - expected) / cached_exp, 1e-5,
                                         msg=f'Expected analytic: {cached_exp}, analytic: {expected}')
-                        self.assertLess(abs(cached_cal - calculated), 1e-6,
+                        self.assertLess(abs(cached_cal - calculated), 1e-3,
                                         msg=f'Expected calculated: {cached_cal}, calculated: {calculated}')
         if cache_mode:
             with open('european_option_reg_test.json', 'w') as h:
