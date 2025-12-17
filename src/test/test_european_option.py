@@ -324,5 +324,5 @@ class TestEuropeanOption(unittest.TestCase):
             cached_vals = [cached_results[instrument_id][params][k] for k in keys]
             for k, v, v_c in zip(keys, values, cached_vals):
                 self.assertLess(abs(v_c - v) / v_c, rel_tol,
-                                msg=f'Keys: {keys}, Rel Error Fail for "{k}" - Expected cached: {v_c}, got: {v}')
-                self.assertLess(abs(v_c - v), abs_tol, msg=f'Keys: {keys}, Abs Error Fail "{k}" - Expected cached: {v_c}, got: {v}')
+                                msg=f'ID "{instrument_id}", params: {params}, Rel Error Fail for "{k}" - Expected cached: {v_c}, got: {v}')
+                self.assertLess(abs(v_c - v), abs_tol, msg=f'ID "{instrument_id}", params: {params}, Abs Error Fail "{k}" - Expected cached: {v_c}, got: {v}')
