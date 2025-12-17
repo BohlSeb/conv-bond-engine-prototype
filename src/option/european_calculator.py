@@ -51,7 +51,7 @@ class FEVanillaResult:
 def basic_grid(transform_h: BSTransformHelper, time2mat: float, model_params: ModelParams) -> DelaunayMesh2D:
     i_x = np.linspace(0.0, time2mat, model_params.size)
     if model_params.concentrating:
-        beta = model_params.size * 1e-4  # TODO: Find good concentrating beta
+        beta = 0.1  # TODO: Find good concentrating beta
         i_y = np.array(ConcentratingInterval(transform_h.x_min(),
                                              transform_h.x_max(),
                                              model_params.size,
