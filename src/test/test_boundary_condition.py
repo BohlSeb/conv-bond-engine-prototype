@@ -17,7 +17,7 @@ from finite_elements.boundary import (
     merge_dirichlet_last_wins
 )
 
-from test.utils import plot_solution
+from test.utils import plot_solution_triangles
 
 PLOT = False
 
@@ -52,7 +52,7 @@ class BoundaryConditionTest(unittest.TestCase):
         u_expected = test_condition_linear(elements.points()[:, 0], elements.points()[:, 1])
         np.testing.assert_allclose(u, u_expected, atol=1e-14)
         if PLOT:
-            plot_solution(elements, u, "laplace u = 0 with linear Dirichlet BC")
+            plot_solution_triangles(elements, u, "laplace u = 0 with linear Dirichlet BC")
 
     def test_poisson_const(self) -> None:
         elements = self._elements
@@ -66,7 +66,7 @@ class BoundaryConditionTest(unittest.TestCase):
         lhs_f, rhs_f = apply_dirichlet_sparse(lhs_f, rhs_f, linear_condition.data())
         u_approx_f = np.linalg.solve(lhs_f.toarray(), rhs_f)
         if PLOT:
-            plot_solution(elements, u_approx_f, "laplace u = 10 with trig. Dirichlet BC")
+            plot_solution_triangles(elements, u_approx_f, "laplace u = 10 with trig. Dirichlet BC")
 
     def test_poisson_trigonometric(self) -> None:
         elements = self._elements
@@ -81,7 +81,7 @@ class BoundaryConditionTest(unittest.TestCase):
         lhs_f, rhs_f = apply_dirichlet_sparse(lhs_f, rhs_f, trig_condition.data())
         u_approx_f = np.linalg.solve(lhs_f.toarray(), rhs_f)
         if PLOT:
-            plot_solution(elements, u_approx_f, "laplace u = trigonometric f with linear Dirichlet BC")
+            plot_solution_triangles(elements, u_approx_f, "laplace u = trigonometric f with linear Dirichlet BC")
 
     def test_laplace_neumann(self) -> None:
         elements = self._elements
@@ -98,7 +98,7 @@ class BoundaryConditionTest(unittest.TestCase):
         lhs, rhs = apply_dirichlet_sparse(lhs, rhs, dirichlet_data)
         u_approx = np.linalg.solve(lhs.toarray(), rhs)
         if PLOT:
-            plot_solution(elements, u_approx, "laplace u = 0, with Neumann for x_min and linear Dirichlet elsewhere")
+            plot_solution_triangles(elements, u_approx, "laplace u = 0, with Neumann for x_min and linear Dirichlet elsewhere")
 
     def test_robin_neumann_sanity(self) -> None:
         elements = self._elements

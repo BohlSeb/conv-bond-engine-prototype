@@ -72,16 +72,22 @@ class ConstDirichletBC(ConstBoundaryBC):
     # Warning: assumes that self._where is coming from rectangle helper segments
     def as_data_1d(self, where: str) -> list[DirichletDataT]:
         assert where in ('left', 'right')
-        idx = 0 if where == 'left' else self._g.size
+        idx = 0 if where == 'left' else self._g.size - 1
         return [(np.array([idx]), np.array([g])) for g in self._g]
 
 
-def merge_dirichlet_last_wins(data: list[DirichletDataT], debug_overwrite: bool = True) -> DirichletDataT:
+def merge_dirichlet_last_wins(
+        data: list[DirichletDataT],
+        skip_overwrite: bool = False,
+        debug_overwrite: bool = True
+) -> DirichletDataT:
     if not data:
         # Return empty arrays with correct dtypes and shapes
         return np.array([], dtype=np.int64), np.array([], dtype=np.float64)
     idx_all = np.concatenate([np.asarray(idx, dtype=np.int64) for idx, _ in data])
     g_all = np.concatenate([np.asarray(g, dtype=np.float64) for _, g in data])
+    if skip_overwrite:
+        return idx_all, g_all
     # reverse arrays so "last wins" becomes "first occurrence"
     idx_rev = idx_all[::-1]
     g_rev = g_all[::-1]

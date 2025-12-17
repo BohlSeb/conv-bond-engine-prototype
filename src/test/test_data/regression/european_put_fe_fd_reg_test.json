@@ -1,0 +1,84 @@
+{
+    "PUT": [
+        {
+            "params": [
+                50,
+                1
+            ],
+            "data": {
+                "analytic": 28.5819643864,
+                "calculated": 28.5598066968
+            }
+        },
+        {
+            "params": [
+                50,
+                2
+            ],
+            "data": {
+                "analytic": 28.5819643864,
+                "calculated": 28.6369361645
+            }
+        },
+        {
+            "params": [
+                100,
+                1
+            ],
+            "data": {
+                "analytic": 28.5819643864,
+                "calculated": 28.5743281683
+            }
+        },
+        {
+            "params": [
+                100,
+                2
+            ],
+            "data": {
+                "analytic": 28.5819643864,
+                "calculated": 28.6129583519
+            }
+        },
+        {
+            "params": [
+                200,
+                1
+            ],
+            "data": {
+                "analytic": 28.5819643864,
+                "calculated": 28.5702383584
+            }
+        },
+        {
+            "params": [
+                200,
+                2
+            ],
+            "data": {
+                "analytic": 28.5819643864,
+                "calculated": 28.5895417538
+            }
+        },
+        {
+            "params": [
+                400,
+                1
+            ],
+            "data": {
+                "analytic": 28.5819643864,
+                "calculated": 28.5724037023
+            }
+        },
+        {
+            "params": [
+                400,
+                2
+            ],
+            "data": {
+                "analytic": 28.5819643864,
+                "calculated": 28.5820421376
+            }
+        }
+    ]
+}

@@ -1,0 +1,84 @@
+{
+    "CALL": [
+        {
+            "params": [
+                50,
+                1
+            ],
+            "data": {
+                "analytic": 49.2141661514,
+                "calculated": 49.0560649445
+            }
+        },
+        {
+            "params": [
+                50,
+                2
+            ],
+            "data": {
+                "analytic": 49.2141661514,
+                "calculated": 49.1998299839
+            }
+        },
+        {
+            "params": [
+                100,
+                1
+            ],
+            "data": {
+                "analytic": 49.2141661514,
+                "calculated": 49.2241093361
+            }
+        },
+        {
+            "params": [
+                100,
+                2
+            ],
+            "data": {
+                "analytic": 49.2141661514,
+                "calculated": 49.2958116992
+            }
+        },
+        {
+            "params": [
+                200,
+                1
+            ],
+            "data": {
+                "analytic": 49.2141661514,
+                "calculated": 49.2116041509
+            }
+        },
+        {
+            "params": [
+                200,
+                2
+            ],
+            "data": {
+                "analytic": 49.2141661514,
+                "calculated": 49.2473578542
+            }
+        },
+        {
+            "params": [
+                400,
+                1
+            ],
+            "data": {
+                "analytic": 49.2141661514,
+                "calculated": 49.2051852076
+            }
+        },
+        {
+            "params": [
+                400,
+                2
+            ],
+            "data": {
+                "analytic": 49.2141661514,
+                "calculated": 49.2230333606
+            }
+        }
+    ]
+}

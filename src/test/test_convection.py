@@ -12,7 +12,7 @@ from finite_elements.assembler import LinTriangleAssembler
 from finite_elements.boundary import RectangleHelper, ConstDirichletBC, ConstRobinBC, merge_dirichlet_last_wins, \
     apply_dirichlet_sparse
 
-from test.utils import plot_solution
+from test.utils import plot_solution_triangles
 
 PLOT = False
 
@@ -103,8 +103,8 @@ class TestConvection(unittest.TestCase):
         if PLOT:
             import QuantLib as ql
 
-            plot_solution(elements, u_approx,
-                          title=fr"FEM Solution of Jay's Con-fusion Problem: $\kappa$ = {kappa}" + f'\n{weak_dirichlet = }, {concentrating = }')
+            plot_solution_triangles(elements, u_approx,
+                                    title=fr"FEM Solution of Jay's Con-fusion Problem: $\kappa$ = {kappa}" + f'\n{weak_dirichlet = }, {concentrating = }')
 
             x_plt = np.linspace(0.0, 1.0, 100)
             u = (1 - np.exp((x_plt - 1) / kappa)) / (1 - np.exp(-1 / kappa)) / 2
