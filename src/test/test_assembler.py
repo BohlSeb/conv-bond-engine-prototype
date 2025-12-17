@@ -7,18 +7,18 @@ import random
 import numpy as np
 
 from finite_elements.triangulation import DelaunayMesh2D
-from finite_elements.elements import LinearTriElements
-from finite_elements.assembler import FEMAssembler
+from finite_elements.elements import LinearTriangles, LinearIntervals
+from finite_elements.assembler import LinTriangleAssembler, LinIntervalAssembler
 
 
-class FEAssemblerTest(unittest.TestCase):
+class FEAssembler2DTest(unittest.TestCase):
 
     @staticmethod
-    def setup_regular(n: int) -> LinearTriElements:
+    def setup_regular(n: int) -> LinearTriangles:
         x_vals = np.linspace(-1, 2, n)
         y_vals = np.linspace(-1.5, 1, n)
         tri = DelaunayMesh2D(x_vals, y_vals)
-        elements = LinearTriElements(tri.points(), tri.triangles(), tri.areas())
+        elements = LinearTriangles(tri.points(), tri.triangles(), tri.areas())
         return elements
 
     @staticmethod
@@ -41,7 +41,7 @@ class FEAssemblerTest(unittest.TestCase):
         integrand = np.ones(elements.points().shape[0])
         area = 3.0 * 2.5
 
-        assembler = FEMAssembler(elements)
+        assembler = LinTriangleAssembler(elements)
         lhs = assembler.assemble_mass().tocsr()
 
         result = integrand @ lhs @ integrand
@@ -52,7 +52,7 @@ class FEAssemblerTest(unittest.TestCase):
         integrand = np.array([x[0] + x[1] for x in elements.points()])
         integral = 1.875
 
-        assembler = FEMAssembler(elements)
+        assembler = LinTriangleAssembler(elements)
         lhs = assembler.assemble_mass().tocsr()
 
         result = np.ones_like(integrand) @ lhs @ integrand
@@ -61,18 +61,18 @@ class FEAssemblerTest(unittest.TestCase):
     def test_mass_linear_exact_irregular(self) -> None:
         x_knots, y_knots = self.setup_irregular()
         tri = DelaunayMesh2D(x_knots, y_knots)
-        elements = LinearTriElements(tri.points(), tri.triangles(), tri.areas())
+        elements = LinearTriangles(tri.points(), tri.triangles(), tri.areas())
         integrand = np.array([x[0] + x[1] for x in elements.points()])
         integral = 1331.64
 
-        assembler = FEMAssembler(elements)
+        assembler = LinTriangleAssembler(elements)
         lhs = assembler.assemble_mass().tocsr()
 
         result = np.ones_like(integrand) @ lhs @ integrand
         self.assertAlmostEqual(float(result), integral)
 
     def test_mass_times(self) -> None:
-        print('Testing mass assembler...')
+        print('Testing 2d mass assembler...')
 
         def f(x: float, y: float) -> float:
             return np.sin(np.pi * x) + np.cos(np.pi * y)
@@ -84,7 +84,7 @@ class FEAssemblerTest(unittest.TestCase):
             integrand = np.array([f(x[0], x[1]) for x in elements.points()])
 
             start = timer()
-            assembler = FEMAssembler(elements)
+            assembler = LinTriangleAssembler(elements)
             lhs = assembler.assemble_mass().tocsr()
             result = integrand @ lhs @ np.ones_like(integrand)
             end = timer()
@@ -102,7 +102,7 @@ class FEAssemblerTest(unittest.TestCase):
         area = 3.0 * 2.5
         integral = area * grad_norm_squared
 
-        assembler = FEMAssembler(elements)
+        assembler = LinTriangleAssembler(elements)
         lhs = assembler.assemble_stiffness().tocsr()
 
         result = integrand @ lhs @ integrand
@@ -114,20 +114,20 @@ class FEAssemblerTest(unittest.TestCase):
 
         x_knots, y_knots = self.setup_irregular()
         tri = DelaunayMesh2D(x_knots, y_knots)
-        elements = LinearTriElements(tri.points(), tri.triangles(), tri.areas())
+        elements = LinearTriangles(tri.points(), tri.triangles(), tri.areas())
         integrand = np.array([f(x[0], x[1]) for x in elements.points()])
         grad_norm_squared = 3 ** 2 + (-2) ** 2
         area = 8.0 * 13.7
         integral = area * grad_norm_squared
 
-        assembler = FEMAssembler(elements)
+        assembler = LinTriangleAssembler(elements)
         lhs = assembler.assemble_stiffness().tocsr()
 
         result = integrand @ lhs @ integrand
         self.assertAlmostEqual(float(result), integral)
 
     def test_stiffness_times(self) -> None:
-        print('Testing stiffness assembler...')
+        print('Testing 2d stiffness assembler...')
 
         def f(x, y):
             return x ** 2 + y ** 2
@@ -139,7 +139,7 @@ class FEAssemblerTest(unittest.TestCase):
             integrand = np.array([f(x[0], x[1]) for x in elements.points()])
 
             start = timer()
-            assembler = FEMAssembler(elements)
+            assembler = LinTriangleAssembler(elements)
             lhs = assembler.assemble_stiffness().tocsr()
             result = integrand @ lhs @ integrand
             end = timer()
@@ -151,7 +151,7 @@ class FEAssemblerTest(unittest.TestCase):
 
         x_knots, y_knots = self.setup_irregular()
         tri = DelaunayMesh2D(x_knots, y_knots)
-        elements = LinearTriElements(tri.points(), tri.triangles(), tri.areas())
+        elements = LinearTriangles(tri.points(), tri.triangles(), tri.areas())
         integrand = np.array([f(x[0], x[1]) for x in elements.points()])
 
         grad_norm_squared = 3 ** 2 + (-2) ** 2
@@ -160,7 +160,7 @@ class FEAssemblerTest(unittest.TestCase):
         integral_f_squared = 19668.1
         integral = integral_f_squared + integral_grad_squared
 
-        assembler = FEMAssembler(elements)
+        assembler = LinTriangleAssembler(elements)
         lhs_m = assembler.assemble_mass().tocsr()
         lhs_s = assembler.assemble_stiffness().tocsr()
 
@@ -186,7 +186,7 @@ class FEAssemblerTest(unittest.TestCase):
         f = np.array([_f(x[0], x[1]) for x in elements.points()])
         ones = np.ones_like(f)
 
-        assembler = FEMAssembler(elements)
+        assembler = LinTriangleAssembler(elements)
         lhs = assembler.assemble_convection(weight_x=lambda x, y: beta[0], weight_y=lambda x, y: beta[1]).tocsr()
         f = np.array([_f(x[0], x[1]) for x in elements.points()])
         result = ones @ lhs @ f
@@ -194,13 +194,139 @@ class FEAssemblerTest(unittest.TestCase):
 
         x_grid, y_grid = self.setup_irregular()
         tri_irr = DelaunayMesh2D(x_grid, y_grid)
-        elements_irr = LinearTriElements(tri_irr.points(), tri_irr.triangles(), tri_irr.areas())
+        elements_irr = LinearTriangles(tri_irr.points(), tri_irr.triangles(), tri_irr.areas())
         f_irr = np.array([_f(x[0], x[1]) for x in elements_irr.points()])
         ones_irr = np.ones_like(f_irr)
 
-        assembler_irr = FEMAssembler(elements_irr)
+        assembler_irr = LinTriangleAssembler(elements_irr)
         lhs_irr = assembler_irr.assemble_convection(weight_x=lambda x, y: beta[0],
                                                     weight_y=lambda x, y: beta[1]).tocsr()
         result_irr = ones_irr @ lhs_irr @ f_irr
         err = float(abs(result_irr - expected_irregular) / expected_irregular)
         self.assertLess(err, 1e-6)  # error too big?
+
+
+class FEAssembler1DTest(unittest.TestCase):
+
+    @staticmethod
+    def setup_regular(n: int) -> LinearIntervals:
+        # 1D domain [a,b]
+        a, b = -1.0, 2.0
+        x = np.linspace(a, b, n)
+        return LinearIntervals(x)
+
+    @staticmethod
+    def setup_irregular() -> LinearIntervals:
+        random.seed(42)
+        a, b = -1.0, 7.0
+
+        # random positive steps, then rescale to hit [a,b] exactly
+        h = np.array([random.uniform(0.2, 0.8) for _ in range(30)], dtype=np.float64)
+        h *= (b - a) / float(np.sum(h))
+        x = a + np.concatenate([[0.0], np.cumsum(h)])
+        x[-1] = b  # exact endpoint
+        return LinearIntervals(x)
+
+    def test_mass_constant_length(self) -> None:
+        elements = self.setup_regular(200)
+        x = elements.points()
+        ones = np.ones_like(x)
+
+        assembler = LinIntervalAssembler(elements)
+        mass = assembler.assemble_mass().tocsr()
+        expected = float(x[-1] - x[0])
+        result = float(ones @ mass @ ones)
+        self.assertAlmostEqual(result, expected, places=12)
+
+    def test_mass_linear_exact(self) -> None:
+        elements = self.setup_regular(301)
+        elements_irr = self.setup_irregular()
+        x = elements.points()
+        x_irr = elements_irr.points()
+
+        # u(x) = x + 1 (linear) -> exactly represented by P1
+        u = x + 1.0
+        u_irr = x_irr + 1.0
+        ones = np.ones_like(x)
+        ones_irr = np.ones_like(x_irr)
+
+        assembler = LinIntervalAssembler(elements)
+        assembler_irr = LinIntervalAssembler(elements_irr)
+        mass = assembler.assemble_mass().tocsr()
+        mass_irr = assembler_irr.assemble_mass().tocsr()
+
+        # ∫ (x+1) dx from a to b = 0.5(b^2-a^2) + (b-a)
+        a, b = float(x[0]), float(x[-1])
+        expected = 0.5 * (b * b - a * a) + (b - a)
+        result = float(ones @ mass @ u)
+        self.assertAlmostEqual(result, expected, places=12)
+
+        a_irr, b_irr = float(x_irr[0]), float(x_irr[-1])
+        expected_irr = 0.5 * (b_irr * b_irr - a_irr * a_irr) + (b_irr - a_irr)
+        result_irr = float(ones_irr @ mass_irr @ u_irr)
+        self.assertAlmostEqual(result_irr, expected_irr, places=12)
+
+
+    def test_stiffness_exact_linear(self) -> None:
+        elements = self.setup_regular(301)
+        elements_irr = self.setup_irregular()
+        x = elements.points()
+        x_irr = elements_irr.points()
+
+        # u(x) = 3x + 1 -> u' = 3
+        u = 3.0 * x + 1.0
+        u_irr = 3.0 * x_irr + 1.0
+
+        assembler = LinIntervalAssembler(elements)
+        assembler_irr = LinIntervalAssembler(elements_irr)
+
+        stiff = assembler.assemble_stiffness().tocsr()
+        stiff_irr = assembler_irr.assemble_stiffness().tocsr()
+
+        a, b = float(x[0]), float(x[-1])
+        expected = (3.0 ** 2) * (b - a)  # ∫ (u')^2 dx
+        result = float(u @ stiff @ u)
+        self.assertAlmostEqual(result, expected, places=10)
+
+        a_irr, b_irr = float(x_irr[0]), float(x_irr[-1])
+        expected_irr = (3.0 ** 2) * (b_irr - a_irr)
+        result_irr = float(u_irr @ stiff_irr @ u_irr)
+        self.assertAlmostEqual(result_irr, expected_irr, places=10)
+
+    def test_convection_invariant(self) -> None:
+        """
+        With your Galerkin convection matrix C for beta * u_x:
+            ones^T C u  ≈  ∫ beta * u'(x) dx = beta*(u(b)-u(a))
+
+        This is a great structural test, and it holds regardless of whether u is linear,
+        because both sides depend only on endpoint values when integrated exactly.
+        """
+        beta = -3.0
+
+        elements = self.setup_regular(250)
+        elements_irr = self.setup_irregular()
+        x = elements.points()
+        x_irr = elements_irr.points()
+
+        def u_fun(xx: np.ndarray) -> np.ndarray:
+            return 2.0 * xx * xx + 3.0 * xx + 3.0  # any smooth function
+
+        u = u_fun(x)
+        ones = np.ones_like(x)
+        u_irr = u_fun(x_irr)
+        ones_irr = np.ones_like(x_irr)
+
+        assembler = LinIntervalAssembler(elements)
+        assembler_irr = LinIntervalAssembler(elements_irr)
+        conv = assembler.assemble_convection(beta=lambda _: beta).tocsr()
+        conv_irr = assembler_irr.assemble_convection(beta=lambda _: beta).tocsr()
+
+        a, b = float(x[0]), float(x[-1])
+        expected = beta * (u_fun(np.array([b]))[0] - u_fun(np.array([a]))[0])
+        result = float(ones @ conv @ u)
+        self.assertAlmostEqual(result, expected, places=10)
+
+        a_irr, b_irr = float(x_irr[0]), float(x_irr[-1])
+        expected_irr = beta * (u_fun(np.array([b_irr]))[0] - u_fun(np.array([a_irr]))[0])
+        result_irr= float(ones_irr @ conv_irr @ u_irr)
+        self.assertAlmostEqual(result_irr, expected_irr, places=10)

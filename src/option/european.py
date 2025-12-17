@@ -9,6 +9,7 @@ from numpy.typing import NDArray
 
 from finite_elements.boundary import RectangleHelper, ConstDirichletBC, ConstRobinBC
 from finite_elements.functions import Constant, Scalar
+from finite_elements.constants import EPSILON
 
 
 @dataclass
@@ -146,9 +147,6 @@ class BSTransformHelper:
 
     def x_max(self) -> float:
         return self._x_max
-
-
-INFLOW_DIRECTION_TOL = 1e-14
 
 
 class EuropeanOptionBCs:
@@ -362,12 +360,12 @@ class EuropeanOptionBCs:
         return ConstDirichletBC(bc, self._points, g)
 
     def _inflow_edge(self) -> tuple[NDArray[np.int64], float]:  # return inflow edge and outward normal
-        if self._transform_h.beta_y() > INFLOW_DIRECTION_TOL:
+        if self._transform_h.beta_y() > EPSILON:
             return self._boundary_h.y_min(), -1.0
         return self._boundary_h.y_max(), 1.0
 
     def _outflow_edge(self) -> tuple[NDArray[np.int64], float]:
-        if self._transform_h.beta_y() > INFLOW_DIRECTION_TOL:
+        if self._transform_h.beta_y() > EPSILON:
             return self._boundary_h.y_max(), 1.0
         return self._boundary_h.y_min(), -1.0
 

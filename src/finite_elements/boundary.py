@@ -6,6 +6,8 @@ from numpy.typing import NDArray
 
 from typing import TYPE_CHECKING
 
+from finite_elements.constants import EPSILON_TOL
+
 if TYPE_CHECKING:
     from scipy.sparse import lil_matrix
     from finite_elements.functions import Function
@@ -14,14 +16,13 @@ if TYPE_CHECKING:
 class RectangleHelper:
 
     def __init__(self, points: NDArray[np.float64]) -> None:
-        tol = 1e-12
         x_min, x_max = points[:, 0].min(), points[:, 0].max()
         y_min, y_max = points[:, 1].min(), points[:, 1].max()
 
-        x_min_idx = np.where(np.abs(points[:, 0] - x_min) < tol)[0]
-        x_max_idx = np.where(np.abs(points[:, 0] - x_max) < tol)[0]
-        y_min_idx = np.where(np.abs(points[:, 1] - y_min) < tol)[0]
-        y_max_idx = np.where(np.abs(points[:, 1] - y_max) < tol)[0]
+        x_min_idx = np.where(np.abs(points[:, 0] - x_min) < EPSILON_TOL)[0]
+        x_max_idx = np.where(np.abs(points[:, 0] - x_max) < EPSILON_TOL)[0]
+        y_min_idx = np.where(np.abs(points[:, 1] - y_min) < EPSILON_TOL)[0]
+        y_max_idx = np.where(np.abs(points[:, 1] - y_max) < EPSILON_TOL)[0]
 
         self._x_min = x_min_idx[np.argsort(points[x_min_idx, 1])]
         self._x_max = x_max_idx[np.argsort(points[x_max_idx, 1])]
@@ -58,14 +59,21 @@ class ConstBoundaryBC:
         self._g = condition(points[self._where])
 
 
-# Dirichlet condition, can be applied for any subset of the boundary
+# Dirichlet condition
 
 DirichletDataT = tuple[NDArray[np.int64], NDArray[np.float64]]
+
 
 class ConstDirichletBC(ConstBoundaryBC):
 
     def data(self) -> DirichletDataT:
         return self._where, self._g
+
+    # Warning: assumes that self._where is coming from rectangle helper segments
+    def as_data_1d(self, where: str) -> list[DirichletDataT]:
+        assert where in ('left', 'right')
+        idx = 0 if where == 'left' else self._g.size
+        return [(np.array([idx]), np.array([g])) for g in self._g]
 
 
 def merge_dirichlet_last_wins(data: list[DirichletDataT], debug_overwrite: bool = True) -> DirichletDataT:
@@ -91,19 +99,16 @@ def merge_dirichlet_last_wins(data: list[DirichletDataT], debug_overwrite: bool 
 
 
 def apply_dirichlet_sparse(
-    left_h_side: sp.spmatrix,
-    right_h_side: np.ndarray,
-    data: DirichletDataT,
-    *,
-    make_symmetric: bool = True,
+        left_h_side: sp.spmatrix,
+        right_h_side: np.ndarray,
+        data: DirichletDataT,
 ) -> tuple[sp.csr_matrix, np.ndarray]:
     """
-    Apply Dirichlet constraints u[idx] = g by elimination.
-
+    Apply Dirichlet constraints u[where] = values by elimination.
     Steps:
-      1) b <- b - A[:,idx] @ g        (remove known contribution)
-      2) if make_symmetric: zero columns idx (keeps symmetry/SPD when applicable)
-      3) zero rows idx; set diag=1; b[idx]=g
+      1) b <- b - A[:,where] @ values  (write constrained DOF contributions to b)
+      2) zero columns 'where' (removes constrained DOFs from all other equations A)
+      3) overwrite rows 'where' as identity and set b[where] = values
     """
     where = np.asarray(data[0], dtype=np.int64)
     values = np.asarray(data[1], dtype=np.float64)
@@ -114,27 +119,24 @@ def apply_dirichlet_sparse(
     if where.size == 0:
         return lhs, rhs
 
-    # 1) eliminate known contribution from all equations
     rhs -= lhs[:, where] @ values
 
-    # 2) if requested, zero columns (CSC is efficient for columns)
-    if make_symmetric:
-        lhs_c = lhs.tocsc(copy=False)
-        for k in where:
-            lhs_c.data[lhs_c.indptr[k]:lhs_c.indptr[k + 1]] = 0.0
-        lhs = lhs_c.tocsr(copy=False)
+    lhs_c = lhs.tocsc(copy=False)
+    for k in where:
+        lhs_c.data[lhs_c.indptr[k]:lhs_c.indptr[k + 1]] = 0.0
+    lhs = lhs_c.tocsr(copy=False)
 
-    # 3) overwrite constrained rows (LIL is convenient for a few rows)
     lhs_l = lhs.tolil(copy=False)
-    for k, val in zip(where, values):
+    for k in where:
         lhs_l.rows[k] = [k]
         lhs_l.data[k] = [1.0]
-        rhs[k] = val
-    lhs = lhs_l.tocsr(copy=False)
 
-    if make_symmetric:
-        # column zeroing may have wiped the diagonal; restore it
-        lhs[where, where] = 1.0
+    # watch out for "where" containing duplicates (e.g. when two conditions constrain the same coordinate)
+    # in this case, use merge_dirichlet function above before passing data to this function
+    rhs[where] = values
+
+    lhs = lhs_l.tocsr(copy=False)
+    lhs[where, where] = 1.0
 
     return lhs, rhs
 
@@ -215,9 +217,8 @@ class ConstRobinBC(ConstNeumannBCBase):
         # build effective (gamma, h) used by canonical Robin du/dn + gamma*u = h
         # gamma = alpha / beta
         # h = g / beta
-        tol = 1e-12
-        beta_small = np.abs(beta) <= tol
-        both_small = beta_small & (np.abs(self._alpha) <= tol)
+        beta_small = np.abs(beta) <= EPSILON_TOL
+        both_small = beta_small & (np.abs(self._alpha) <= EPSILON_TOL)
         if np.any(both_small):
             raise ValueError('Robin BC with alpha=beta=0 encountered (ill-posed)')
         # todo: gpt doesn't want to change _g and _alpha in place ("future proof") ... keep in mind

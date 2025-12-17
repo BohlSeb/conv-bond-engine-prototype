@@ -13,7 +13,8 @@ import QuantLib as ql
 from typing import TYPE_CHECKING, Any
 
 from option.european import MarketData, OptionData, ModelParams
-from option.european_calculator import fe_european_vanilla
+from option.european_calculator import european_vanilla_fe2d
+from finite_elements.constants import EPSILON
 
 from test.utils import plot_solution
 
@@ -37,7 +38,7 @@ class TestEuropeanOption(unittest.TestCase):
         option_data = OptionData(val_date=today, period2mat=ql.Period('4Y'), strike=90.0, cal=ql.TARGET(),
                                  dc=ql.Actual365Fixed(), put_call=ql.Option.Call)
         params = ModelParams(size=25, concentrating=False, flux_boundary_bc=False, use_supg=False, std_devs=6)
-        result = fe_european_vanilla(option_data, market_data, params)
+        result = european_vanilla_fe2d(option_data, market_data, params)
         res, exact = self._compare_analytic(option_data, market_data, params, result)
         print(
             f'Testing European Call Option: analytic {exact:4.2f}, calculated {res:4.2f}, error: {(res - exact) / exact:2.6f}')
@@ -48,7 +49,7 @@ class TestEuropeanOption(unittest.TestCase):
         option_data = OptionData(val_date=today, period2mat=ql.Period('4Y'), strike=110.0, cal=ql.TARGET(),
                                  dc=ql.Actual365Fixed(), put_call=ql.Option.Put)
         params = ModelParams(size=25, concentrating=False, flux_boundary_bc=False)
-        result = fe_european_vanilla(option_data, market_data, params)
+        result = european_vanilla_fe2d(option_data, market_data, params)
         res, exact = self._compare_analytic(option_data, market_data, params, result)
         print(
             f'Testing European Put Option: analytic {exact:4.2f}, calculated {res:4.2f}, error: {(res - exact) / exact:2.6f}')
@@ -93,7 +94,7 @@ class TestEuropeanOption(unittest.TestCase):
                 for concentrating, weak_bc in modes:
                     params = ModelParams(size=n, concentrating=concentrating, flux_boundary_bc=weak_bc, use_supg=False)
                     start = timer()
-                    result = fe_european_vanilla(option, market_data, params)
+                    result = european_vanilla_fe2d(option, market_data, params)
                     calculated, expected = self._compare_analytic(option, market_data, params, result)
                     cal_time = timer() - start
                     err = calculated - expected
@@ -108,9 +109,9 @@ class TestEuropeanOption(unittest.TestCase):
                     else:
                         key = (n, concentrating, weak_bc)
                         cached_exp, cached_cal = cache_in[option_id][key]
-                        self.assertLess(abs(cached_exp - expected) / cached_exp, 1e-3,
+                        self.assertLess(abs(cached_exp - expected) / cached_exp, 1e-6,
                                         msg=f'Expected analytic: {cached_exp}, analytic: {expected}')
-                        self.assertLess(abs(cached_cal - calculated), 0.1,
+                        self.assertLess(abs(cached_cal - calculated), 1e-6,
                                         msg=f'Expected calculated: {cached_cal}, calculated: {calculated}')
         if cache_mode:
             with open('european_option_reg_test.json', 'w') as h:
@@ -138,9 +139,8 @@ class TestEuropeanOption(unittest.TestCase):
         ql_option.setPricingEngine(ql.AnalyticEuropeanEngine(bs_process))
 
         if PLOT:
-            spot_eps = 1e-14
-            s_plt = np.linspace(option_data.strike * math.exp(result.transform_helper.x_min()) + spot_eps,
-                                option_data.strike * math.exp(result.transform_helper.x_max()) - spot_eps, 100)
+            s_plt = np.linspace(option_data.strike * math.exp(result.transform_helper.x_min()) + EPSILON,
+                                option_data.strike * math.exp(result.transform_helper.x_max()) - EPSILON, 100)
             u_exact = []
             u_approx = []
             for s in s_plt:

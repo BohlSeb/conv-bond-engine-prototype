@@ -6,8 +6,8 @@ import numpy as np
 
 from finite_elements.functions import Scalar, Constant
 from finite_elements.triangulation import DelaunayMesh2D
-from finite_elements.elements import LinearTriElements
-from finite_elements.assembler import FEMAssembler
+from finite_elements.elements import LinearTriangles
+from finite_elements.assembler import LinTriangleAssembler
 from finite_elements.boundary import (
     RectangleHelper,
     ConstDirichletBC,
@@ -36,7 +36,7 @@ class BoundaryConditionTest(unittest.TestCase):
         # i_x = ConcentratingInterval(-1.0, 1.0, 40, 0.5, 0.1)
         i_x = np.linspace(-1.0, 1.0, 20)
         tri = DelaunayMesh2D(i_x, i_x)
-        self._elements = LinearTriElements(tri.points(), tri.triangles(), tri.areas())
+        self._elements = LinearTriangles(tri.points(), tri.triangles(), tri.areas())
 
     # most basic elliptic equation: \div \grad u = 0 with Dirichlet BC
     # The linear function defined on the boundary is also the solution inside the domain
@@ -44,7 +44,7 @@ class BoundaryConditionTest(unittest.TestCase):
         elements = self._elements
         helper = RectangleHelper(elements.points())
         linear_condition = ConstDirichletBC(helper.boundary(), elements.points(), Scalar(lambda x, y: x + y))
-        assembler = FEMAssembler(elements)
+        assembler = LinTriangleAssembler(elements)
         lhs = assembler.assemble_stiffness()
         rhs = np.zeros(elements.points().shape[0])
         lhs, rhs = apply_dirichlet_sparse(lhs, rhs, linear_condition.data())
@@ -60,7 +60,7 @@ class BoundaryConditionTest(unittest.TestCase):
         f = 10 * np.ones(elements.points().shape[0])
         linear_condition = ConstDirichletBC(helper.boundary(), elements.points(),
                                             Scalar(lambda x, y: np.sin(np.pi * x) - np.cos(np.pi * y)))
-        assembler = FEMAssembler(elements)
+        assembler = LinTriangleAssembler(elements)
         lhs_f = assembler.assemble_stiffness()
         rhs_f = assembler.assemble_mass().toarray() @ f
         lhs_f, rhs_f = apply_dirichlet_sparse(lhs_f, rhs_f, linear_condition.data())
@@ -75,7 +75,7 @@ class BoundaryConditionTest(unittest.TestCase):
         y = elements.points()[:, 1]
         f = 2 * np.pi ** 2 * (np.sin(np.pi * x) - np.cos(np.pi * y))
         trig_condition = ConstDirichletBC(helper.boundary(), elements.points(), Scalar(lambda _x, _y: _x + _y))
-        assembler = FEMAssembler(elements)
+        assembler = LinTriangleAssembler(elements)
         lhs_f = assembler.assemble_stiffness()
         rhs_f = assembler.assemble_mass().toarray() @ f
         lhs_f, rhs_f = apply_dirichlet_sparse(lhs_f, rhs_f, trig_condition.data())
@@ -90,7 +90,7 @@ class BoundaryConditionTest(unittest.TestCase):
         dirichlet_2 = ConstDirichletBC(helper.x_max(), elements.points(), Scalar(lambda x, y: x + y))
         dirichlet_3 = ConstDirichletBC(helper.y_max(), elements.points(), Scalar(lambda x, y: x + y))
         neumann = ConstNeumannBC(helper.y_min(), elements.points(), Constant(-1.0))
-        assembler = FEMAssembler(elements)
+        assembler = LinTriangleAssembler(elements)
         lhs = assembler.assemble_stiffness()
         rhs = np.zeros(elements.points().shape[0])
         neumann.apply(rhs)
@@ -102,7 +102,7 @@ class BoundaryConditionTest(unittest.TestCase):
 
     def test_robin_neumann_sanity(self) -> None:
         elements = self._elements
-        assembler = FEMAssembler(elements)
+        assembler = LinTriangleAssembler(elements)
         lhs = assembler.assemble_stiffness()
 
         lhs_robin = assembler.assemble_stiffness()

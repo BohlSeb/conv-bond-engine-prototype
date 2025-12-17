@@ -8,10 +8,10 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     import numpy as np
     from numpy.typing import NDArray
-    from finite_elements.elements import LinearTriElements
+    from finite_elements.elements import LinearTriangles
 
 
-def plot_solution(elements: LinearTriElements, u: NDArray[np.float64], title: str) -> None:
+def plot_solution(elements: LinearTriangles, u: NDArray[np.float64], title: str) -> None:
     points = elements.points()
     triangles = elements.triangles()
     x = points[:, 0]

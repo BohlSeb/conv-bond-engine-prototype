@@ -7,9 +7,9 @@ from typing import TYPE_CHECKING
 import numpy as np
 import scipy.sparse.linalg as spl
 
-from finite_elements.assembler import FEMAssembler
+from finite_elements.assembler import LinTriangleAssembler
 from finite_elements.boundary import RectangleHelper, merge_dirichlet_last_wins, apply_dirichlet_sparse
-from finite_elements.elements import LinearTriElements
+from finite_elements.elements import LinearTriangles
 from finite_elements.triangulation import DelaunayMesh2D
 from option.european import BSTransformHelper, EuropeanOptionBCs
 from finite_elements.interval import ConcentratingInterval
@@ -24,7 +24,7 @@ class FEVanillaResult:
     w_solution: NDArray[np.float64]
     strike: float
     rectangle_helper: RectangleHelper
-    elements: LinearTriElements
+    elements: LinearTriangles
 
     # debug
     transform_helper: BSTransformHelper
@@ -41,7 +41,9 @@ class FEVanillaResult:
         return npv
 
 
-def fe_european_vanilla(option_data: OptionData, market_data: MarketData, model_params: ModelParams) -> FEVanillaResult:
+def european_vanilla_fe2d(option_data: OptionData,
+                          market_data: MarketData,
+                          model_params: ModelParams) -> FEVanillaResult:
     transform_h = BSTransformHelper(market_data, option_data, std_devs=model_params.std_devs)
 
     i_x = np.linspace(0.0, option_data.time2maturity(), model_params.size)
@@ -57,10 +59,9 @@ def fe_european_vanilla(option_data: OptionData, market_data: MarketData, model_
         i_y = np.linspace(transform_h.x_min(), transform_h.x_max(), model_params.size)
 
     grid = DelaunayMesh2D(i_x, i_y)
-    elements = LinearTriElements(grid.points(), grid.triangles(), grid.areas())
-    rectangle_h = RectangleHelper(elements.points())
+    elements = LinearTriangles(grid.points(), grid.triangles(), grid.areas())
 
-    assembler = FEMAssembler(elements)
+    assembler = LinTriangleAssembler(elements)
     lhs = assembler.assemble_stiffness(diffusion_tensor=transform_h.diffusion())
     lhs += assembler.assemble_convection(weight_x=lambda _x, _y: 1.0, weight_y=lambda _x, _y: transform_h.beta_y())
     lhs += transform_h.mass() * assembler.assemble_mass()
@@ -71,6 +72,7 @@ def fe_european_vanilla(option_data: OptionData, market_data: MarketData, model_
 
     robin_bcs = []
     dirichlet_bcs = []
+    rectangle_h = RectangleHelper(elements.points())
     bc_helper = EuropeanOptionBCs(market_data, transform_h, rectangle_h, elements.points())
 
     if model_params.flux_boundary_bc:
@@ -84,7 +86,7 @@ def fe_european_vanilla(option_data: OptionData, market_data: MarketData, model_
     for robin_bc in robin_bcs:
         robin_bc.apply(lhs, rhs)
     dirichlet_data = merge_dirichlet_last_wins(dirichlet_bcs)
-    lhs, rhs = apply_dirichlet_sparse(lhs, rhs, dirichlet_data, make_symmetric=True)
+    lhs, rhs = apply_dirichlet_sparse(lhs, rhs, dirichlet_data)
     w = spl.spsolve(lhs, rhs)
     result = FEVanillaResult(w_solution=w,
                              strike=option_data.strike,
