@@ -329,3 +329,4 @@ class TestEuropeanOption(unittest.TestCase):
                     self.assertLess(abs(v_c - v), abs_tol, msg=f'ID "{instrument_id}", params: {params}, Abs Error Fail "{k}" - Expected cached: {v_c}, got: {v}')
                 except Exception as e:
                     print(e)
+                    raise e
