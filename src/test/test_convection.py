@@ -6,13 +6,13 @@ from matplotlib import pyplot as plt
 
 from finite_elements.functions import Constant
 from finite_elements.interval import ConcentratingInterval
-from finite_elements.triangulation import DelaunayMesh2D
-from finite_elements.elements import LinearTriElements
-from finite_elements.assembler import FEMAssembler
+from finite_elements.triangulation import CrudeMesh2D
+from finite_elements.elements import LinearTriangles
+from finite_elements.assembler import LinTriangleAssembler
 from finite_elements.boundary import RectangleHelper, ConstDirichletBC, ConstRobinBC, merge_dirichlet_last_wins, \
     apply_dirichlet_sparse
 
-from test.utils import plot_solution
+from test.utils import plot_solution_triangles
 
 PLOT = False
 
@@ -47,8 +47,8 @@ class TestConvection(unittest.TestCase):
             x = y
         else:
             x = np.array(ConcentratingInterval(0.0, 1.0, 20, 1.0 - kappa, 2 * kappa).grid())
-        mesh = DelaunayMesh2D(x, y)
-        elements = LinearTriElements(mesh.points(), mesh.triangles(), mesh.areas())
+        mesh = CrudeMesh2D(x, y)
+        elements = LinearTriangles(mesh.points(), mesh.triangles(), mesh.areas())
         b_help = RectangleHelper(elements.points())
 
         dirichlet_bcs = []
@@ -81,7 +81,7 @@ class TestConvection(unittest.TestCase):
         robin_bcs.append(bc_top)
         robin_bcs.append(bc_bottom)
 
-        assembler = FEMAssembler(elements)
+        assembler = LinTriangleAssembler(elements)
 
         f_mass = assembler.assemble_mass()
         rhs = f_mass.toarray() @ np.full(elements.points().shape[0], f)
@@ -103,8 +103,8 @@ class TestConvection(unittest.TestCase):
         if PLOT:
             import QuantLib as ql
 
-            plot_solution(elements, u_approx,
-                          title=fr"FEM Solution of Jay's Con-fusion Problem: $\kappa$ = {kappa}" + f'\n{weak_dirichlet = }, {concentrating = }')
+            plot_solution_triangles(elements, u_approx,
+                                    title=fr"FEM Solution of Jay's Con-fusion Problem: $\kappa$ = {kappa}" + f'\n{weak_dirichlet = }, {concentrating = }')
 
             x_plt = np.linspace(0.0, 1.0, 100)
             u = (1 - np.exp((x_plt - 1) / kappa)) / (1 - np.exp(-1 / kappa)) / 2

@@ -9,6 +9,7 @@ from numpy.typing import NDArray
 
 from finite_elements.boundary import RectangleHelper, ConstDirichletBC, ConstRobinBC
 from finite_elements.functions import Constant, Scalar
+from finite_elements.constants import EPSILON
 
 
 @dataclass
@@ -41,6 +42,7 @@ class ModelParams:
     concentrating: bool = True
     flux_boundary_bc: bool = False
     std_devs: int = 6
+    max_spots: int = 5
     use_supg: bool = False
     supg_scale: float = 1.0
 
@@ -110,7 +112,7 @@ class BSTransformHelper:
             x ∈ [−std_devs σ √T, +std_devs σ √T].
     """
 
-    def __init__(self, market_data: MarketData, option_data: OptionData, std_devs: int = 6) -> None:
+    def __init__(self, market_data: MarketData, option_data: OptionData, model_params: ModelParams) -> None:
         self._kappa = 0.5 * market_data.sigma ** 2
         # diffusion tensor
         # x1 := x := tau (reversed time), x2 := y := log(S)
@@ -123,8 +125,8 @@ class BSTransformHelper:
         # convection beta = (1, beta_y)
         self._beta_y = -1 * (market_data.r - market_data.q - self._kappa)
         self._mass = market_data.r
-        self._x_max = std_devs * market_data.sigma * math.sqrt(option_data.time2maturity())
-        self._x_min = -self._x_max
+        self._x_min = -1.0 * model_params.std_devs * market_data.sigma * math.sqrt(option_data.time2maturity())
+        self._x_max = math.log(market_data.spot * model_params.max_spots / option_data.strike)
 
     def diffusion(self) -> NDArray[np.float64]:
         return self._a
@@ -146,9 +148,6 @@ class BSTransformHelper:
 
     def x_max(self) -> float:
         return self._x_max
-
-
-INFLOW_DIRECTION_TOL = 1e-14
 
 
 class EuropeanOptionBCs:
@@ -362,12 +361,12 @@ class EuropeanOptionBCs:
         return ConstDirichletBC(bc, self._points, g)
 
     def _inflow_edge(self) -> tuple[NDArray[np.int64], float]:  # return inflow edge and outward normal
-        if self._transform_h.beta_y() > INFLOW_DIRECTION_TOL:
+        if self._transform_h.beta_y() > EPSILON:
             return self._boundary_h.y_min(), -1.0
         return self._boundary_h.y_max(), 1.0
 
     def _outflow_edge(self) -> tuple[NDArray[np.int64], float]:
-        if self._transform_h.beta_y() > INFLOW_DIRECTION_TOL:
+        if self._transform_h.beta_y() > EPSILON:
             return self._boundary_h.y_max(), 1.0
         return self._boundary_h.y_min(), -1.0
 

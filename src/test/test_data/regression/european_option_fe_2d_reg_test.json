@@ -1,0 +1,806 @@
+{
+    "ITM C": [
+        {
+            "params": [
+                25,
+                false,
+                false
+            ],
+            "data": {
+                "analytic": 25.962363098082,
+                "calculated": 26.102658552917
+            }
+        },
+        {
+            "params": [
+                25,
+                true,
+                false
+            ],
+            "data": {
+                "analytic": 25.962363098082,
+                "calculated": 26.022730823739
+            }
+        },
+        {
+            "params": [
+                25,
+                false,
+                true
+            ],
+            "data": {
+                "analytic": 25.962363098082,
+                "calculated": 26.097625313689
+            }
+        },
+        {
+            "params": [
+                25,
+                true,
+                true
+            ],
+            "data": {
+                "analytic": 25.962363098082,
+                "calculated": 26.016637675268
+            }
+        },
+        {
+            "params": [
+                50,
+                false,
+                false
+            ],
+            "data": {
+                "analytic": 25.962363098082,
+                "calculated": 26.104179466754
+            }
+        },
+        {
+            "params": [
+                50,
+                true,
+                false
+            ],
+            "data": {
+                "analytic": 25.962363098082,
+                "calculated": 25.995736562148
+            }
+        },
+        {
+            "params": [
+                50,
+                false,
+                true
+            ],
+            "data": {
+                "analytic": 25.962363098082,
+                "calculated": 26.10512307097
+            }
+        },
+        {
+            "params": [
+                50,
+                true,
+                true
+            ],
+            "data": {
+                "analytic": 25.962363098082,
+                "calculated": 25.996594729228
+            }
+        },
+        {
+            "params": [
+                75,
+                false,
+                false
+            ],
+            "data": {
+                "analytic": 25.962363098082,
+                "calculated": 26.019002741824
+            }
+        },
+        {
+            "params": [
+                75,
+                true,
+                false
+            ],
+            "data": {
+                "analytic": 25.962363098082,
+                "calculated": 25.963537590946
+            }
+        },
+        {
+            "params": [
+                75,
+                false,
+                true
+            ],
+            "data": {
+                "analytic": 25.962363098082,
+                "calculated": 26.01800568445
+            }
+        },
+        {
+            "params": [
+                75,
+                true,
+                true
+            ],
+            "data": {
+                "analytic": 25.962363098082,
+                "calculated": 25.962980010507
+            }
+        }
+    ],
+    "ATM C": [
+        {
+            "params": [
+                25,
+                false,
+                false
+            ],
+            "data": {
+                "analytic": 13.595677789028,
+                "calculated": 14.202694631245
+            }
+        },
+        {
+            "params": [
+                25,
+                true,
+                false
+            ],
+            "data": {
+                "analytic": 13.595677789028,
+                "calculated": 13.565742163616
+            }
+        },
+        {
+            "params": [
+                25,
+                false,
+                true
+            ],
+            "data": {
+                "analytic": 13.595677789028,
+                "calculated": 14.195061572441
+            }
+        },
+        {
+            "params": [
+                25,
+                true,
+                true
+            ],
+            "data": {
+                "analytic": 13.595677789028,
+                "calculated": 13.563224683638
+            }
+        },
+        {
+            "params": [
+                50,
+                false,
+                false
+            ],
+            "data": {
+                "analytic": 13.595677789028,
+                "calculated": 13.734812792363
+            }
+        },
+        {
+            "params": [
+                50,
+                true,
+                false
+            ],
+            "data": {
+                "analytic": 13.595677789028,
+                "calculated": 13.624130077816
+            }
+        },
+        {
+            "params": [
+                50,
+                false,
+                true
+            ],
+            "data": {
+                "analytic": 13.595677789028,
+                "calculated": 13.736377954965
+            }
+        },
+        {
+            "params": [
+                50,
+                true,
+                true
+            ],
+            "data": {
+                "analytic": 13.595677789028,
+                "calculated": 13.624740598518
+            }
+        },
+        {
+            "params": [
+                75,
+                false,
+                false
+            ],
+            "data": {
+                "analytic": 13.595677789028,
+                "calculated": 13.652695354283
+            }
+        },
+        {
+            "params": [
+                75,
+                true,
+                false
+            ],
+            "data": {
+                "analytic": 13.595677789028,
+                "calculated": 13.600281680518
+            }
+        },
+        {
+            "params": [
+                75,
+                false,
+                true
+            ],
+            "data": {
+                "analytic": 13.595677789028,
+                "calculated": 13.651367579979
+            }
+        },
+        {
+            "params": [
+                75,
+                true,
+                true
+            ],
+            "data": {
+                "analytic": 13.595677789028,
+                "calculated": 13.59955609421
+            }
+        }
+    ],
+    "OTM C": [
+        {
+            "params": [
+                25,
+                false,
+                false
+            ],
+            "data": {
+                "analytic": 6.737001016424,
+                "calculated": 6.959888035776
+            }
+        },
+        {
+            "params": [
+                25,
+                true,
+                false
+            ],
+            "data": {
+                "analytic": 6.737001016424,
+                "calculated": 6.843688845548
+            }
+        },
+        {
+            "params": [
+                25,
+                false,
+                true
+            ],
+            "data": {
+                "analytic": 6.737001016424,
+                "calculated": 6.949767877136
+            }
+        },
+        {
+            "params": [
+                25,
+                true,
+                true
+            ],
+            "data": {
+                "analytic": 6.737001016424,
+                "calculated": 6.842980680805
+            }
+        },
+        {
+            "params": [
+                50,
+                false,
+                false
+            ],
+            "data": {
+                "analytic": 6.737001016424,
+                "calculated": 6.765545936979
+            }
+        },
+        {
+            "params": [
+                50,
+                true,
+                false
+            ],
+            "data": {
+                "analytic": 6.737001016424,
+                "calculated": 6.761578871511
+            }
+        },
+        {
+            "params": [
+                50,
+                false,
+                true
+            ],
+            "data": {
+                "analytic": 6.737001016424,
+                "calculated": 6.767637182834
+            }
+        },
+        {
+            "params": [
+                50,
+                true,
+                true
+            ],
+            "data": {
+                "analytic": 6.737001016424,
+                "calculated": 6.761729996129
+            }
+        },
+        {
+            "params": [
+                75,
+                false,
+                false
+            ],
+            "data": {
+                "analytic": 6.737001016424,
+                "calculated": 6.766503333357
+            }
+        },
+        {
+            "params": [
+                75,
+                true,
+                false
+            ],
+            "data": {
+                "analytic": 6.737001016424,
+                "calculated": 6.745895632722
+            }
+        },
+        {
+            "params": [
+                75,
+                false,
+                true
+            ],
+            "data": {
+                "analytic": 6.737001016424,
+                "calculated": 6.764906304164
+            }
+        },
+        {
+            "params": [
+                75,
+                true,
+                true
+            ],
+            "data": {
+                "analytic": 6.737001016424,
+                "calculated": 6.745169287227
+            }
+        }
+    ],
+    "OTM P": [
+        {
+            "params": [
+                25,
+                false,
+                false
+            ],
+            "data": {
+                "analytic": 4.714751052919,
+                "calculated": 4.855253838636
+            }
+        },
+        {
+            "params": [
+                25,
+                true,
+                false
+            ],
+            "data": {
+                "analytic": 4.714751052919,
+                "calculated": 4.74951888207
+            }
+        },
+        {
+            "params": [
+                25,
+                false,
+                true
+            ],
+            "data": {
+                "analytic": 4.714751052919,
+                "calculated": 4.85525383407
+            }
+        },
+        {
+            "params": [
+                25,
+                true,
+                true
+            ],
+            "data": {
+                "analytic": 4.714751052919,
+                "calculated": 4.749518123777
+            }
+        },
+        {
+            "params": [
+                50,
+                false,
+                false
+            ],
+            "data": {
+                "analytic": 4.714751052919,
+                "calculated": 4.782945916033
+            }
+        },
+        {
+            "params": [
+                50,
+                true,
+                false
+            ],
+            "data": {
+                "analytic": 4.714751052919,
+                "calculated": 4.727513226043
+            }
+        },
+        {
+            "params": [
+                50,
+                false,
+                true
+            ],
+            "data": {
+                "analytic": 4.714751052919,
+                "calculated": 4.782945914222
+            }
+        },
+        {
+            "params": [
+                50,
+                true,
+                true
+            ],
+            "data": {
+                "analytic": 4.714751052919,
+                "calculated": 4.727513226062
+            }
+        },
+        {
+            "params": [
+                75,
+                false,
+                false
+            ],
+            "data": {
+                "analytic": 4.714751052919,
+                "calculated": 4.741814384723
+            }
+        },
+        {
+            "params": [
+                75,
+                true,
+                false
+            ],
+            "data": {
+                "analytic": 4.714751052919,
+                "calculated": 4.715000589772
+            }
+        },
+        {
+            "params": [
+                75,
+                false,
+                true
+            ],
+            "data": {
+                "analytic": 4.714751052919,
+                "calculated": 4.741814385855
+            }
+        },
+        {
+            "params": [
+                75,
+                true,
+                true
+            ],
+            "data": {
+                "analytic": 4.714751052919,
+                "calculated": 4.715000589756
+            }
+        }
+    ],
+    "ATM P": [
+        {
+            "params": [
+                25,
+                false,
+                false
+            ],
+            "data": {
+                "analytic": 15.424709895235,
+                "calculated": 15.750513911287
+            }
+        },
+        {
+            "params": [
+                25,
+                true,
+                false
+            ],
+            "data": {
+                "analytic": 15.424709895235,
+                "calculated": 15.397364956181
+            }
+        },
+        {
+            "params": [
+                25,
+                false,
+                true
+            ],
+            "data": {
+                "analytic": 15.424709895235,
+                "calculated": 15.750513990844
+            }
+        },
+        {
+            "params": [
+                25,
+                true,
+                true
+            ],
+            "data": {
+                "analytic": 15.424709895235,
+                "calculated": 15.397364998214
+            }
+        },
+        {
+            "params": [
+                50,
+                false,
+                false
+            ],
+            "data": {
+                "analytic": 15.424709895235,
+                "calculated": 15.499919607664
+            }
+        },
+        {
+            "params": [
+                50,
+                true,
+                false
+            ],
+            "data": {
+                "analytic": 15.424709895235,
+                "calculated": 15.438949263611
+            }
+        },
+        {
+            "params": [
+                50,
+                false,
+                true
+            ],
+            "data": {
+                "analytic": 15.424709895235,
+                "calculated": 15.499919498294
+            }
+        },
+        {
+            "params": [
+                50,
+                true,
+                true
+            ],
+            "data": {
+                "analytic": 15.424709895235,
+                "calculated": 15.43894927571
+            }
+        },
+        {
+            "params": [
+                75,
+                false,
+                false
+            ],
+            "data": {
+                "analytic": 15.424709895235,
+                "calculated": 15.455336382884
+            }
+        },
+        {
+            "params": [
+                75,
+                true,
+                false
+            ],
+            "data": {
+                "analytic": 15.424709895235,
+                "calculated": 15.426541496777
+            }
+        },
+        {
+            "params": [
+                75,
+                false,
+                true
+            ],
+            "data": {
+                "analytic": 15.424709895235,
+                "calculated": 15.455336430549
+            }
+        },
+        {
+            "params": [
+                75,
+                true,
+                true
+            ],
+            "data": {
+                "analytic": 15.424709895235,
+                "calculated": 15.426541488665
+            }
+        }
+    ],
+    "ITM P": [
+        {
+            "params": [
+                25,
+                false,
+                false
+            ],
+            "data": {
+                "analytic": 31.642677274001,
+                "calculated": 31.706366218945
+            }
+        },
+        {
+            "params": [
+                25,
+                true,
+                false
+            ],
+            "data": {
+                "analytic": 31.642677274001,
+                "calculated": 31.672069025537
+            }
+        },
+        {
+            "params": [
+                25,
+                false,
+                true
+            ],
+            "data": {
+                "analytic": 31.642677274001,
+                "calculated": 31.706369602694
+            }
+        },
+        {
+            "params": [
+                25,
+                true,
+                true
+            ],
+            "data": {
+                "analytic": 31.642677274001,
+                "calculated": 31.67211408448
+            }
+        },
+        {
+            "params": [
+                50,
+                false,
+                false
+            ],
+            "data": {
+                "analytic": 31.642677274001,
+                "calculated": 31.635117445512
+            }
+        },
+        {
+            "params": [
+                50,
+                true,
+                false
+            ],
+            "data": {
+                "analytic": 31.642677274001,
+                "calculated": 31.648542758836
+            }
+        },
+        {
+            "params": [
+                50,
+                false,
+                true
+            ],
+            "data": {
+                "analytic": 31.642677274001,
+                "calculated": 31.635116006549
+            }
+        },
+        {
+            "params": [
+                50,
+                true,
+                true
+            ],
+            "data": {
+                "analytic": 31.642677274001,
+                "calculated": 31.648543123805
+            }
+        },
+        {
+            "params": [
+                75,
+                false,
+                false
+            ],
+            "data": {
+                "analytic": 31.642677274001,
+                "calculated": 31.644520492313
+            }
+        },
+        {
+            "params": [
+                75,
+                true,
+                false
+            ],
+            "data": {
+                "analytic": 31.642677274001,
+                "calculated": 31.645145620203
+            }
+        },
+        {
+            "params": [
+                75,
+                false,
+                true
+            ],
+            "data": {
+                "analytic": 31.642677274001,
+                "calculated": 31.644520889962
+            }
+        },
+        {
+            "params": [
+                75,
+                true,
+                true
+            ],
+            "data": {
+                "analytic": 31.642677274001,
+                "calculated": 31.645145413261
+            }
+        }
+    ]
+}
