@@ -79,7 +79,7 @@ class TestEuropeanOption(unittest.TestCase):
                 f'Testing European Put Option QL-FD {size:>3}: analytic {exact:4.4f}, calculated {bench_pv:4.4f}, error: {(bench_pv - exact) / exact:2.6f}, time {bench_time:2.4f}')
 
     def test_european_call_option_fe_fd(self, cache_mode: bool = False) -> None:
-        test_file = 'test_data/regression/european_call_fe_fd_reg_test.json'
+        test_file = 'european_call_fe_fd_reg_test.json'
         print(
             f'Testing implicit/crank-nicholson space-finite-element european call regression against "{test_file}" ...')
         today = self.initialize_today()
@@ -116,7 +116,7 @@ class TestEuropeanOption(unittest.TestCase):
             self._write_cache(test_file, cached_data)
 
     def test_european_put_option_fe_fd(self, cache_mode: bool = False) -> None:
-        test_file = 'test_data/regression/european_put_fe_fd_reg_test.json'
+        test_file = 'european_put_fe_fd_reg_test.json'
         print(
             f'Testing implicit/crank-nicholson space-finite-element european put regression against "{test_file}" ...')
         today = self.initialize_today()
@@ -153,7 +153,7 @@ class TestEuropeanOption(unittest.TestCase):
             self._write_cache(test_file, cached_data)
 
     def test_european_option_fe_2d(self, cache_mode: bool = False) -> None:
-        test_file = 'test_data/regression/european_option_fe_2d_reg_test.json'
+        test_file = 'european_option_fe_2d_reg_test.json'
         print(f'Testing 2d finite element european option regression against "{test_file}" ...')
         if PLOT:
             raise RuntimeError(
