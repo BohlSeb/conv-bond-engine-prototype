@@ -11,7 +11,7 @@ import scipy.sparse.linalg as spl
 from finite_elements.assembler import LinTriangleAssembler, LinIntervalAssembler
 from finite_elements.boundary import RectangleHelper, merge_dirichlet_last_wins, apply_dirichlet_sparse
 from finite_elements.elements import LinearTriangles, LinearIntervals
-from finite_elements.triangulation import DelaunayMesh2D
+from finite_elements.triangulation import DelaunayMesh2D, CrudeMesh2D, Mesh2D
 from option.european import BSTransformHelper, EuropeanOptionBCs
 from finite_elements.interval import ConcentratingInterval
 from time_stepping.finite_differences import step_theta
@@ -48,7 +48,10 @@ class FEVanillaResult:
         return npv
 
 
-def basic_grid(transform_h: BSTransformHelper, time2mat: float, model_params: ModelParams) -> DelaunayMesh2D:
+def basic_grid(transform_h: BSTransformHelper,
+               time2mat: float,
+               model_params: ModelParams,
+               delaunay: bool = False) -> Mesh2D:
     i_x = np.linspace(0.0, time2mat, model_params.size)
     if model_params.concentrating:
         beta = 0.1  # TODO: Find good concentrating beta
@@ -59,7 +62,9 @@ def basic_grid(transform_h: BSTransformHelper, time2mat: float, model_params: Mo
                                              beta).grid())
     else:
         i_y = np.linspace(transform_h.x_min(), transform_h.x_max(), model_params.size)
-    return DelaunayMesh2D(i_x, i_y)
+    if delaunay:
+        return DelaunayMesh2D(i_x, i_y)
+    return CrudeMesh2D(i_x, i_y)
 
 
 def european_vanilla_fe_2d(option_data: OptionData,

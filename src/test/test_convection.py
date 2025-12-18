@@ -6,7 +6,7 @@ from matplotlib import pyplot as plt
 
 from finite_elements.functions import Constant
 from finite_elements.interval import ConcentratingInterval
-from finite_elements.triangulation import DelaunayMesh2D
+from finite_elements.triangulation import CrudeMesh2D
 from finite_elements.elements import LinearTriangles
 from finite_elements.assembler import LinTriangleAssembler
 from finite_elements.boundary import RectangleHelper, ConstDirichletBC, ConstRobinBC, merge_dirichlet_last_wins, \
@@ -47,7 +47,7 @@ class TestConvection(unittest.TestCase):
             x = y
         else:
             x = np.array(ConcentratingInterval(0.0, 1.0, 20, 1.0 - kappa, 2 * kappa).grid())
-        mesh = DelaunayMesh2D(x, y)
+        mesh = CrudeMesh2D(x, y)
         elements = LinearTriangles(mesh.points(), mesh.triangles(), mesh.areas())
         b_help = RectangleHelper(elements.points())
 

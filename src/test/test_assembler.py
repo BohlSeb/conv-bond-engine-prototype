@@ -6,7 +6,7 @@ import random
 
 import numpy as np
 
-from finite_elements.triangulation import DelaunayMesh2D
+from finite_elements.triangulation import CrudeMesh2D
 from finite_elements.elements import LinearTriangles, LinearIntervals
 from finite_elements.assembler import LinTriangleAssembler, LinIntervalAssembler
 
@@ -17,7 +17,7 @@ class FEAssembler2DTest(unittest.TestCase):
     def setup_regular(n: int) -> LinearTriangles:
         x_vals = np.linspace(-1, 2, n)
         y_vals = np.linspace(-1.5, 1, n)
-        tri = DelaunayMesh2D(x_vals, y_vals)
+        tri = CrudeMesh2D(x_vals, y_vals)
         elements = LinearTriangles(tri.points(), tri.triangles(), tri.areas())
         return elements
 
@@ -60,7 +60,7 @@ class FEAssembler2DTest(unittest.TestCase):
 
     def test_mass_linear_exact_irregular(self) -> None:
         x_knots, y_knots = self.setup_irregular()
-        tri = DelaunayMesh2D(x_knots, y_knots)
+        tri = CrudeMesh2D(x_knots, y_knots)
         elements = LinearTriangles(tri.points(), tri.triangles(), tri.areas())
         integrand = np.array([x[0] + x[1] for x in elements.points()])
         integral = 1331.64
@@ -113,7 +113,7 @@ class FEAssembler2DTest(unittest.TestCase):
             return 3 * x - 2 * y + 1
 
         x_knots, y_knots = self.setup_irregular()
-        tri = DelaunayMesh2D(x_knots, y_knots)
+        tri = CrudeMesh2D(x_knots, y_knots)
         elements = LinearTriangles(tri.points(), tri.triangles(), tri.areas())
         integrand = np.array([f(x[0], x[1]) for x in elements.points()])
         grad_norm_squared = 3 ** 2 + (-2) ** 2
@@ -150,7 +150,7 @@ class FEAssembler2DTest(unittest.TestCase):
             return 3 * x - 2 * y + 1
 
         x_knots, y_knots = self.setup_irregular()
-        tri = DelaunayMesh2D(x_knots, y_knots)
+        tri = CrudeMesh2D(x_knots, y_knots)
         elements = LinearTriangles(tri.points(), tri.triangles(), tri.areas())
         integrand = np.array([f(x[0], x[1]) for x in elements.points()])
 
@@ -193,7 +193,7 @@ class FEAssembler2DTest(unittest.TestCase):
         self.assertAlmostEqual(float(result), expected)
 
         x_grid, y_grid = self.setup_irregular()
-        tri_irr = DelaunayMesh2D(x_grid, y_grid)
+        tri_irr = CrudeMesh2D(x_grid, y_grid)
         elements_irr = LinearTriangles(tri_irr.points(), tri_irr.triangles(), tri_irr.areas())
         f_irr = np.array([_f(x[0], x[1]) for x in elements_irr.points()])
         ones_irr = np.ones_like(f_irr)

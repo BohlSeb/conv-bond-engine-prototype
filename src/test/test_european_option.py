@@ -15,7 +15,7 @@ from typing import TYPE_CHECKING, Any
 
 from option.european import MarketData, OptionData, ModelParams
 from option.european_calculator import european_vanilla_fe_2d, european_vanilla_fe_fd
-from finite_elements.constants import EPSILON
+from finite_elements.constants import EPSILON, EPSILON_TOL
 
 from test.utils import plot_solution_triangles, plot_solution_time_space
 
@@ -23,7 +23,6 @@ if TYPE_CHECKING:
     from option.european_calculator import FEVanillaResult
 
 PLOT = False
-
 
 class TestEuropeanOption(unittest.TestCase):
 
@@ -66,7 +65,7 @@ class TestEuropeanOption(unittest.TestCase):
         else:
             sizes = [25, 50, 75, 100]
         for size in sizes:
-            params = ModelParams(size=size, concentrating=True, flux_boundary_bc=False, std_devs=8, max_spots=8)
+            params = ModelParams(size=size, concentrating=False, flux_boundary_bc=True, std_devs=10, max_spots=4)
             start = timer()
             result = european_vanilla_fe_2d(option_data, market_data, params)
             time = timer() - start
@@ -77,7 +76,7 @@ class TestEuropeanOption(unittest.TestCase):
             print(
                 f'Testing European Put Option QL-FD: analytic {exact:4.4f}, calculated {bench_pv:4.4f}, error: {(bench_pv - exact) / exact:2.6f}, time {bench_time:2.4f}')
 
-    def test_european_call_option_fe_fd(self, cache_mode: bool = False) -> None:
+    def test_european_call_option_fe_fd(self, cache_mode: bool = True) -> None:
         test_file = 'european_call_fe_fd_reg_test.json'
         print(
             f'Testing implicit/crank-nicholson space-finite-element european call regression against "{test_file}" ...')
@@ -114,7 +113,7 @@ class TestEuropeanOption(unittest.TestCase):
         if cache_mode:
             self._write_cache(test_file, cached_data)
 
-    def test_european_put_option_fe_fd(self, cache_mode: bool = False) -> None:
+    def test_european_put_option_fe_fd(self, cache_mode: bool = True) -> None:
         test_file = 'european_put_fe_fd_reg_test.json'
         print(
             f'Testing implicit/crank-nicholson space-finite-element european put regression against "{test_file}" ...')
@@ -151,7 +150,7 @@ class TestEuropeanOption(unittest.TestCase):
         if cache_mode:
             self._write_cache(test_file, cached_data)
 
-    def test_european_option_fe_2d(self, cache_mode: bool = False) -> None:
+    def test_european_option_fe_2d(self, cache_mode: bool = True) -> None:
         test_file = 'european_option_fe_2d_reg_test.json'
         print(f'Testing 2d finite element european option regression against "{test_file}" ...')
         if PLOT:
@@ -312,21 +311,17 @@ class TestEuropeanOption(unittest.TestCase):
             keys: tuple[str, ...],
             values: tuple[float, ...],
             cached_results: dict[str, dict[tuple[Any, ...], dict[str, float]]],
-            abs_tol: float = 1e-3,  # todo: find reason for deviations this big across platforms
-            rel_tol: float = 1e-6
+            rel_tol: float = 1e-10
     ) -> None:
         if cache_mode:
             if instrument_id not in cached_results:
-                cached_results[instrument_id] = {params: dict(zip(keys, [round(v, 10) for v in values]))}
+                cached_results[instrument_id] = {params: dict(zip(keys, [round(v, 12) for v in values]))}
             else:
-                cached_results[instrument_id][params] = dict(zip(keys, [round(v, 10) for v in values]))
+                cached_results[instrument_id][params] = dict(zip(keys, [round(v, 12) for v in values]))
         else:
             cached_vals = [cached_results[instrument_id][params][k] for k in keys]
             for k, v, v_c in zip(keys, values, cached_vals):
                 abs_err = abs(v_c - v)
                 rel_err = abs_err / v_c
-                # self.assertLess(rel_err, rel_tol,
-                #                 msg=f'ID "{instrument_id}", params: {params}, Rel Error Fail for "{k}" - Expected cached: {v_c}, got: {v}')
-                # self.assertLess(abs_err, abs_tol,
-                #                 msg=f'ID "{instrument_id}", params: {params}, Abs Error Fail "{k}" - Expected cached: {v_c}, got: {v}')
-                print(f'ID "{instrument_id}", params: {params}, Rel Error "{rel_err}" - Expected cached: {v_c}, got: {v}')
+                self.assertLess(rel_err, rel_tol,
+                                msg=f'ID "{instrument_id}", params: {params}, Rel Error Fail for "{k}" - Expected cached: {v_c}, got: {v}')
