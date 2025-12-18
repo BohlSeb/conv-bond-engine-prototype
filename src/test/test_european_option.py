@@ -15,7 +15,7 @@ from typing import TYPE_CHECKING, Any
 
 from option.european import MarketData, OptionData, ModelParams
 from option.european_calculator import european_vanilla_fe_2d, european_vanilla_fe_fd
-from finite_elements.constants import EPSILON
+from finite_elements.constants import EPSILON, EPSILON_TOL
 
 from test.utils import plot_solution_triangles, plot_solution_time_space
 
@@ -23,6 +23,7 @@ if TYPE_CHECKING:
     from option.european_calculator import FEVanillaResult
 
 PLOT = False
+
 
 class TestEuropeanOption(unittest.TestCase):
 
@@ -33,7 +34,8 @@ class TestEuropeanOption(unittest.TestCase):
         return today
 
     def test_european_call_option_fe_2d(self) -> None:
-        print('Comparing 2d finite element european call option with Quantlib FD when market data is diffusion dominant...')
+        print(
+            'Comparing 2d finite element european call option with Quantlib FD when market data is diffusion dominant...')
         today = self.initialize_today()
         market_data = MarketData(spot=100.0, sigma=0.4, r=0.01, q=0.0)
         option_data = OptionData(val_date=today, period2mat=ql.Period('4Y'), strike=95.0, cal=ql.TARGET(),
@@ -56,7 +58,8 @@ class TestEuropeanOption(unittest.TestCase):
                 f'Testing European Call Option QL-FD {size:>3}: analytic {exact:4.4f}, calculated {bench_pv:4.4f}, error: {(bench_pv - exact) / exact:2.6f}, time {bench_time:2.4f}')
 
     def test_european_put_option_fe_2d(self) -> None:
-        print('Comparing flux-boundary enforcing 2d finite element european put option with Quantlib FD when market data is convection dominant...')
+        print(
+            'Comparing flux-boundary enforcing 2d finite element european put option with Quantlib FD when market data is convection dominant...')
         today = self.initialize_today()
         market_data = MarketData(spot=100.0, sigma=0.03, r=0.1, q=0.0)
         option_data = OptionData(val_date=today, period2mat=ql.Period('4Y'), strike=130.0, cal=ql.TARGET(),
@@ -313,7 +316,7 @@ class TestEuropeanOption(unittest.TestCase):
             keys: tuple[str, ...],
             values: tuple[float, ...],
             cached_results: dict[str, dict[tuple[Any, ...], dict[str, float]]],
-            rel_tol: float = 1e-10
+            abs_tol: float = EPSILON_TOL
     ) -> None:
         if cache_mode:
             if instrument_id not in cached_results:
@@ -324,6 +327,5 @@ class TestEuropeanOption(unittest.TestCase):
             cached_vals = [cached_results[instrument_id][params][k] for k in keys]
             for k, v, v_c in zip(keys, values, cached_vals):
                 abs_err = abs(v_c - v)
-                rel_err = abs_err / v_c
-                self.assertLess(rel_err, rel_tol,
-                                msg=f'ID "{instrument_id}", params: {params}, Rel Error Fail for "{k}" - Expected cached: {v_c}, got: {v}')
+                self.assertLess(abs_err, abs_tol,
+                                msg=f'ID "{instrument_id}", params: {params}, Abs Error Fail for "{k}" - Expected cached: {v_c}, got: {v}')
