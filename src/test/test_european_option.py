@@ -15,7 +15,7 @@ from typing import TYPE_CHECKING, Any
 
 from option.european import MarketData, OptionData, ModelParams
 from option.european_calculator import european_vanilla_fe_2d, european_vanilla_fe_fd
-from finite_elements.constants import EPSILON, EPSILON_TOL
+from finite_elements.constants import EPSILON
 
 from test.utils import plot_solution_triangles, plot_solution_time_space
 
@@ -76,7 +76,7 @@ class TestEuropeanOption(unittest.TestCase):
             print(
                 f'Testing European Put Option QL-FD: analytic {exact:4.4f}, calculated {bench_pv:4.4f}, error: {(bench_pv - exact) / exact:2.6f}, time {bench_time:2.4f}')
 
-    def test_european_call_option_fe_fd(self, cache_mode: bool = True) -> None:
+    def test_european_call_option_fe_fd(self, cache_mode: bool = False) -> None:
         test_file = 'european_call_fe_fd_reg_test.json'
         print(
             f'Testing implicit/crank-nicholson space-finite-element european call regression against "{test_file}" ...')
@@ -113,7 +113,7 @@ class TestEuropeanOption(unittest.TestCase):
         if cache_mode:
             self._write_cache(test_file, cached_data)
 
-    def test_european_put_option_fe_fd(self, cache_mode: bool = True) -> None:
+    def test_european_put_option_fe_fd(self, cache_mode: bool = False) -> None:
         test_file = 'european_put_fe_fd_reg_test.json'
         print(
             f'Testing implicit/crank-nicholson space-finite-element european put regression against "{test_file}" ...')
@@ -150,7 +150,7 @@ class TestEuropeanOption(unittest.TestCase):
         if cache_mode:
             self._write_cache(test_file, cached_data)
 
-    def test_european_option_fe_2d(self, cache_mode: bool = True) -> None:
+    def test_european_option_fe_2d(self, cache_mode: bool = False) -> None:
         test_file = 'european_option_fe_2d_reg_test.json'
         print(f'Testing 2d finite element european option regression against "{test_file}" ...')
         if PLOT:

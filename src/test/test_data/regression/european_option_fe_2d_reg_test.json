@@ -7,8 +7,8 @@
                 false
             ],
             "data": {
-                "analytic": 25.9623630981,
-                "calculated": 26.1041940896
+                "analytic": 25.962363098082,
+                "calculated": 26.102658552917
             }
         },
         {
@@ -18,8 +18,8 @@
                 false
             ],
             "data": {
-                "analytic": 25.9623630981,
-                "calculated": 26.164250338
+                "analytic": 25.962363098082,
+                "calculated": 26.022730823739
             }
         },
         {
@@ -29,8 +29,8 @@
                 true
             ],
             "data": {
-                "analytic": 25.9623630981,
-                "calculated": 26.1056003496
+                "analytic": 25.962363098082,
+                "calculated": 26.097625313689
             }
         },
         {
@@ -40,8 +40,8 @@
                 true
             ],
             "data": {
-                "analytic": 25.9623630981,
-                "calculated": 26.0938386248
+                "analytic": 25.962363098082,
+                "calculated": 26.016637675268
             }
         },
         {
@@ -51,8 +51,8 @@
                 false
             ],
             "data": {
-                "analytic": 25.9623630981,
-                "calculated": 26.0759510062
+                "analytic": 25.962363098082,
+                "calculated": 26.104179466754
             }
         },
         {
@@ -62,8 +62,8 @@
                 false
             ],
             "data": {
-                "analytic": 25.9623630981,
-                "calculated": 26.0011203168
+                "analytic": 25.962363098082,
+                "calculated": 25.995736562148
             }
         },
         {
@@ -73,8 +73,8 @@
                 true
             ],
             "data": {
-                "analytic": 25.9623630981,
-                "calculated": 26.0757008362
+                "analytic": 25.962363098082,
+                "calculated": 26.10512307097
             }
         },
         {
@@ -84,8 +84,8 @@
                 true
             ],
             "data": {
-                "analytic": 25.9623630981,
-                "calculated": 25.9994155953
+                "analytic": 25.962363098082,
+                "calculated": 25.996594729228
             }
         },
         {
@@ -95,8 +95,8 @@
                 false
             ],
             "data": {
-                "analytic": 25.9623630981,
-                "calculated": 26.0320457016
+                "analytic": 25.962363098082,
+                "calculated": 26.019002741824
             }
         },
         {
@@ -106,8 +106,8 @@
                 false
             ],
             "data": {
-                "analytic": 25.9623630981,
-                "calculated": 25.9511418043
+                "analytic": 25.962363098082,
+                "calculated": 25.963537590946
             }
         },
         {
@@ -117,8 +117,8 @@
                 true
             ],
             "data": {
-                "analytic": 25.9623630981,
-                "calculated": 26.031535103
+                "analytic": 25.962363098082,
+                "calculated": 26.01800568445
             }
         },
         {
@@ -128,8 +128,8 @@
                 true
             ],
             "data": {
-                "analytic": 25.9623630981,
-                "calculated": 25.9505364651
+                "analytic": 25.962363098082,
+                "calculated": 25.962980010507
             }
         }
     ],
@@ -141,8 +141,8 @@
                 false
             ],
             "data": {
-                "analytic": 13.595677789,
-                "calculated": 14.1626532353
+                "analytic": 13.595677789028,
+                "calculated": 14.202694631245
             }
         },
         {
@@ -152,8 +152,8 @@
                 false
             ],
             "data": {
-                "analytic": 13.595677789,
-                "calculated": 13.5861010541
+                "analytic": 13.595677789028,
+                "calculated": 13.565742163616
             }
         },
         {
@@ -163,8 +163,8 @@
                 true
             ],
             "data": {
-                "analytic": 13.595677789,
-                "calculated": 14.159302382
+                "analytic": 13.595677789028,
+                "calculated": 14.195061572441
             }
         },
         {
@@ -174,8 +174,8 @@
                 true
             ],
             "data": {
-                "analytic": 13.595677789,
-                "calculated": 13.5522212415
+                "analytic": 13.595677789028,
+                "calculated": 13.563224683638
             }
         },
         {
@@ -185,8 +185,8 @@
                 false
             ],
             "data": {
-                "analytic": 13.595677789,
-                "calculated": 13.7650517004
+                "analytic": 13.595677789028,
+                "calculated": 13.734812792363
             }
         },
         {
@@ -196,8 +196,8 @@
                 false
             ],
             "data": {
-                "analytic": 13.595677789,
-                "calculated": 13.6222221527
+                "analytic": 13.595677789028,
+                "calculated": 13.624130077816
             }
         },
         {
@@ -207,8 +207,8 @@
                 true
             ],
             "data": {
-                "analytic": 13.595677789,
-                "calculated": 13.7649061673
+                "analytic": 13.595677789028,
+                "calculated": 13.736377954965
             }
         },
         {
@@ -218,8 +218,8 @@
                 true
             ],
             "data": {
-                "analytic": 13.595677789,
-                "calculated": 13.6208071032
+                "analytic": 13.595677789028,
+                "calculated": 13.624740598518
             }
         },
         {
@@ -229,8 +229,8 @@
                 false
             ],
             "data": {
-                "analytic": 13.595677789,
-                "calculated": 13.6545118873
+                "analytic": 13.595677789028,
+                "calculated": 13.652695354283
             }
         },
         {
@@ -240,8 +240,8 @@
                 false
             ],
             "data": {
-                "analytic": 13.595677789,
-                "calculated": 13.6003269025
+                "analytic": 13.595677789028,
+                "calculated": 13.600281680518
             }
         },
         {
@@ -251,8 +251,8 @@
                 true
             ],
             "data": {
-                "analytic": 13.595677789,
-                "calculated": 13.6538931667
+                "analytic": 13.595677789028,
+                "calculated": 13.651367579979
             }
         },
         {
@@ -262,8 +262,8 @@
                 true
             ],
             "data": {
-                "analytic": 13.595677789,
-                "calculated": 13.5996964519
+                "analytic": 13.595677789028,
+                "calculated": 13.59955609421
             }
         }
     ],
@@ -275,8 +275,8 @@
                 false
             ],
             "data": {
-                "analytic": 6.7370010164,
-                "calculated": 7.1071618344
+                "analytic": 6.737001016424,
+                "calculated": 6.959888035776
             }
         },
         {
@@ -286,8 +286,8 @@
                 false
             ],
             "data": {
-                "analytic": 6.7370010164,
-                "calculated": 6.8247051964
+                "analytic": 6.737001016424,
+                "calculated": 6.843688845548
             }
         },
         {
@@ -297,8 +297,8 @@
                 true
             ],
             "data": {
-                "analytic": 6.7370010164,
-                "calculated": 7.1052497291
+                "analytic": 6.737001016424,
+                "calculated": 6.949767877136
             }
         },
         {
@@ -308,8 +308,8 @@
                 true
             ],
             "data": {
-                "analytic": 6.7370010164,
-                "calculated": 6.8115827902
+                "analytic": 6.737001016424,
+                "calculated": 6.842980680805
             }
         },
         {
@@ -319,8 +319,8 @@
                 false
             ],
             "data": {
-                "analytic": 6.7370010164,
-                "calculated": 6.7955546217
+                "analytic": 6.737001016424,
+                "calculated": 6.765545936979
             }
         },
         {
@@ -330,8 +330,8 @@
                 false
             ],
             "data": {
-                "analytic": 6.7370010164,
-                "calculated": 6.7692195971
+                "analytic": 6.737001016424,
+                "calculated": 6.761578871511
             }
         },
         {
@@ -341,8 +341,8 @@
                 true
             ],
             "data": {
-                "analytic": 6.7370010164,
-                "calculated": 6.795113145
+                "analytic": 6.737001016424,
+                "calculated": 6.767637182834
             }
         },
         {
@@ -352,8 +352,8 @@
                 true
             ],
             "data": {
-                "analytic": 6.7370010164,
-                "calculated": 6.7672521098
+                "analytic": 6.737001016424,
+                "calculated": 6.761729996129
             }
         },
         {
@@ -363,8 +363,8 @@
                 false
             ],
             "data": {
-                "analytic": 6.7370010164,
-                "calculated": 6.7833062244
+                "analytic": 6.737001016424,
+                "calculated": 6.766503333357
             }
         },
         {
@@ -374,8 +374,8 @@
                 false
             ],
             "data": {
-                "analytic": 6.7370010164,
-                "calculated": 6.7428755881
+                "analytic": 6.737001016424,
+                "calculated": 6.745895632722
             }
         },
         {
@@ -385,8 +385,8 @@
                 true
             ],
             "data": {
-                "analytic": 6.7370010164,
-                "calculated": 6.7825945969
+                "analytic": 6.737001016424,
+                "calculated": 6.764906304164
             }
         },
         {
@@ -396,8 +396,8 @@
                 true
             ],
             "data": {
-                "analytic": 6.7370010164,
-                "calculated": 6.7420853259
+                "analytic": 6.737001016424,
+                "calculated": 6.745169287227
             }
         }
     ],
@@ -409,8 +409,8 @@
                 false
             ],
             "data": {
-                "analytic": 4.7147510529,
-                "calculated": 4.8250417745
+                "analytic": 4.714751052919,
+                "calculated": 4.855253838636
             }
         },
         {
@@ -420,8 +420,8 @@
                 false
             ],
             "data": {
-                "analytic": 4.7147510529,
-                "calculated": 4.7768163167
+                "analytic": 4.714751052919,
+                "calculated": 4.74951888207
             }
         },
         {
@@ -431,8 +431,8 @@
                 true
             ],
             "data": {
-                "analytic": 4.7147510529,
-                "calculated": 4.8250441299
+                "analytic": 4.714751052919,
+                "calculated": 4.85525383407
             }
         },
         {
@@ -442,8 +442,8 @@
                 true
             ],
             "data": {
-                "analytic": 4.7147510529,
-                "calculated": 4.7766985739
+                "analytic": 4.714751052919,
+                "calculated": 4.749518123777
             }
         },
         {
@@ -453,8 +453,8 @@
                 false
             ],
             "data": {
-                "analytic": 4.7147510529,
-                "calculated": 4.7599507043
+                "analytic": 4.714751052919,
+                "calculated": 4.782945916033
             }
         },
         {
@@ -464,8 +464,8 @@
                 false
             ],
             "data": {
-                "analytic": 4.7147510529,
-                "calculated": 4.7262974754
+                "analytic": 4.714751052919,
+                "calculated": 4.727513226043
             }
         },
         {
@@ -475,8 +475,8 @@
                 true
             ],
             "data": {
-                "analytic": 4.7147510529,
-                "calculated": 4.7599506846
+                "analytic": 4.714751052919,
+                "calculated": 4.782945914222
             }
         },
         {
@@ -486,8 +486,8 @@
                 true
             ],
             "data": {
-                "analytic": 4.7147510529,
-                "calculated": 4.7262970723
+                "analytic": 4.714751052919,
+                "calculated": 4.727513226062
             }
         },
         {
@@ -497,8 +497,8 @@
                 false
             ],
             "data": {
-                "analytic": 4.7147510529,
-                "calculated": 4.7511609417
+                "analytic": 4.714751052919,
+                "calculated": 4.741814384723
             }
         },
         {
@@ -508,8 +508,8 @@
                 false
             ],
             "data": {
-                "analytic": 4.7147510529,
-                "calculated": 4.7080512339
+                "analytic": 4.714751052919,
+                "calculated": 4.715000589772
             }
         },
         {
@@ -519,8 +519,8 @@
                 true
             ],
             "data": {
-                "analytic": 4.7147510529,
-                "calculated": 4.7511609339
+                "analytic": 4.714751052919,
+                "calculated": 4.741814385855
             }
         },
         {
@@ -530,8 +530,8 @@
                 true
             ],
             "data": {
-                "analytic": 4.7147510529,
-                "calculated": 4.7080512444
+                "analytic": 4.714751052919,
+                "calculated": 4.715000589756
             }
         }
     ],
@@ -543,8 +543,8 @@
                 false
             ],
             "data": {
-                "analytic": 15.4247098952,
-                "calculated": 15.6839174204
+                "analytic": 15.424709895235,
+                "calculated": 15.750513911287
             }
         },
         {
@@ -554,8 +554,8 @@
                 false
             ],
             "data": {
-                "analytic": 15.4247098952,
-                "calculated": 15.4396097025
+                "analytic": 15.424709895235,
+                "calculated": 15.397364956181
             }
         },
         {
@@ -565,8 +565,8 @@
                 true
             ],
             "data": {
-                "analytic": 15.4247098952,
-                "calculated": 15.6839179261
+                "analytic": 15.424709895235,
+                "calculated": 15.750513990844
             }
         },
         {
@@ -576,8 +576,8 @@
                 true
             ],
             "data": {
-                "analytic": 15.4247098952,
-                "calculated": 15.4394692541
+                "analytic": 15.424709895235,
+                "calculated": 15.397364998214
             }
         },
         {
@@ -587,8 +587,8 @@
                 false
             ],
             "data": {
-                "analytic": 15.4247098952,
-                "calculated": 15.5359001382
+                "analytic": 15.424709895235,
+                "calculated": 15.499919607664
             }
         },
         {
@@ -598,8 +598,8 @@
                 false
             ],
             "data": {
-                "analytic": 15.4247098952,
-                "calculated": 15.4268813745
+                "analytic": 15.424709895235,
+                "calculated": 15.438949263611
             }
         },
         {
@@ -609,8 +609,8 @@
                 true
             ],
             "data": {
-                "analytic": 15.4247098952,
-                "calculated": 15.5359003311
+                "analytic": 15.424709895235,
+                "calculated": 15.499919498294
             }
         },
         {
@@ -620,8 +620,8 @@
                 true
             ],
             "data": {
-                "analytic": 15.4247098952,
-                "calculated": 15.4268825966
+                "analytic": 15.424709895235,
+                "calculated": 15.43894927571
             }
         },
         {
@@ -631,8 +631,8 @@
                 false
             ],
             "data": {
-                "analytic": 15.4247098952,
-                "calculated": 15.4642915967
+                "analytic": 15.424709895235,
+                "calculated": 15.455336382884
             }
         },
         {
@@ -642,8 +642,8 @@
                 false
             ],
             "data": {
-                "analytic": 15.4247098952,
-                "calculated": 15.4274085086
+                "analytic": 15.424709895235,
+                "calculated": 15.426541496777
             }
         },
         {
@@ -653,8 +653,8 @@
                 true
             ],
             "data": {
-                "analytic": 15.4247098952,
-                "calculated": 15.4642915274
+                "analytic": 15.424709895235,
+                "calculated": 15.455336430549
             }
         },
         {
@@ -664,8 +664,8 @@
                 true
             ],
             "data": {
-                "analytic": 15.4247098952,
-                "calculated": 15.4274091149
+                "analytic": 15.424709895235,
+                "calculated": 15.426541488665
             }
         }
     ],
@@ -677,8 +677,8 @@
                 false
             ],
             "data": {
-                "analytic": 31.642677274,
-                "calculated": 31.8257495549
+                "analytic": 31.642677274001,
+                "calculated": 31.706366218945
             }
         },
         {
@@ -688,8 +688,8 @@
                 false
             ],
             "data": {
-                "analytic": 31.642677274,
-                "calculated": 31.6385101078
+                "analytic": 31.642677274001,
+                "calculated": 31.672069025537
             }
         },
         {
@@ -699,8 +699,8 @@
                 true
             ],
             "data": {
-                "analytic": 31.642677274,
-                "calculated": 31.8257350246
+                "analytic": 31.642677274001,
+                "calculated": 31.706369602694
             }
         },
         {
@@ -710,8 +710,8 @@
                 true
             ],
             "data": {
-                "analytic": 31.642677274,
-                "calculated": 31.6384224602
+                "analytic": 31.642677274001,
+                "calculated": 31.67211408448
             }
         },
         {
@@ -721,8 +721,8 @@
                 false
             ],
             "data": {
-                "analytic": 31.642677274,
-                "calculated": 31.6566025703
+                "analytic": 31.642677274001,
+                "calculated": 31.635117445512
             }
         },
         {
@@ -732,8 +732,8 @@
                 false
             ],
             "data": {
-                "analytic": 31.642677274,
-                "calculated": 31.6515817164
+                "analytic": 31.642677274001,
+                "calculated": 31.648542758836
             }
         },
         {
@@ -743,8 +743,8 @@
                 true
             ],
             "data": {
-                "analytic": 31.642677274,
-                "calculated": 31.6566025039
+                "analytic": 31.642677274001,
+                "calculated": 31.635116006549
             }
         },
         {
@@ -754,8 +754,8 @@
                 true
             ],
             "data": {
-                "analytic": 31.642677274,
-                "calculated": 31.6515845767
+                "analytic": 31.642677274001,
+                "calculated": 31.648543123805
             }
         },
         {
@@ -765,8 +765,8 @@
                 false
             ],
             "data": {
-                "analytic": 31.642677274,
-                "calculated": 31.6582168048
+                "analytic": 31.642677274001,
+                "calculated": 31.644520492313
             }
         },
         {
@@ -776,8 +776,8 @@
                 false
             ],
             "data": {
-                "analytic": 31.642677274,
-                "calculated": 31.6379730916
+                "analytic": 31.642677274001,
+                "calculated": 31.645145620203
             }
         },
         {
@@ -787,8 +787,8 @@
                 true
             ],
             "data": {
-                "analytic": 31.642677274,
-                "calculated": 31.6582165804
+                "analytic": 31.642677274001,
+                "calculated": 31.644520889962
             }
         },
         {
@@ -798,8 +798,8 @@
                 true
             ],
             "data": {
-                "analytic": 31.642677274,
-                "calculated": 31.6379710666
+                "analytic": 31.642677274001,
+                "calculated": 31.645145413261
             }
         }
     ]
