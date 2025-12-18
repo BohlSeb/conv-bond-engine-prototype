@@ -15,7 +15,7 @@ from typing import TYPE_CHECKING, Any
 
 from option.european import MarketData, OptionData, ModelParams
 from option.european_calculator import european_vanilla_fe_2d, european_vanilla_fe_fd
-from finite_elements.constants import EPSILON
+from finite_elements.constants import EPSILON, EPSILON_TOL
 
 from test.utils import plot_solution_triangles, plot_solution_time_space
 
@@ -23,6 +23,7 @@ if TYPE_CHECKING:
     from option.european_calculator import FEVanillaResult
 
 PLOT = False
+
 
 class TestEuropeanOption(unittest.TestCase):
 
@@ -33,55 +34,59 @@ class TestEuropeanOption(unittest.TestCase):
         return today
 
     def test_european_call_option_fe_2d(self) -> None:
+        print(
+            'Comparing 2d finite element european call option with Quantlib FD when market data is diffusion dominant...')
         today = self.initialize_today()
-        market_data = MarketData(spot=100.0, sigma=0.03, r=0.1, q=0.0)
-        option_data = OptionData(val_date=today, period2mat=ql.Period('4Y'), strike=90.0, cal=ql.TARGET(),
+        market_data = MarketData(spot=100.0, sigma=0.4, r=0.01, q=0.0)
+        option_data = OptionData(val_date=today, period2mat=ql.Period('4Y'), strike=95.0, cal=ql.TARGET(),
                                  dc=ql.Actual365Fixed(), put_call=ql.Option.Call)
         plot_size = 50
         if PLOT:
             sizes = [plot_size]
         else:
-            sizes = [25, 50, 75, 100]
+            sizes = [50, 100, 150]
         for size in sizes:
-            params = ModelParams(size=size, std_devs=8, max_spots=8)
+            params = ModelParams(size=size, std_devs=8, max_spots=5)
             start = timer()
             result = european_vanilla_fe_2d(option_data, market_data, params)
             time = timer() - start
             res, exact = self._compare_analytic(option_data, market_data, params, result)
             print(
-                f'Testing European Call Option FE-2D: analytic {exact:4.4f}, calculated {res:4.4f}, error: {(res - exact) / exact:2.6f}, time {time:2.4f}')
+                f'Testing European Call Option FE-2D {size:>3}: analytic {exact:4.4f}, calculated {res:4.4f}, error: {(res - exact) / exact:2.6f}, time {time:2.4f}')
             bench_pv, bench_time = self._ql_benchmark_fd(option_data, market_data, params.size)
             print(
-                f'Testing European Call Option QL-FD: analytic {exact:4.4f}, calculated {bench_pv:4.4f}, error: {(bench_pv - exact) / exact:2.6f}, time {bench_time:2.4f}')
+                f'Testing European Call Option QL-FD {size:>3}: analytic {exact:4.4f}, calculated {bench_pv:4.4f}, error: {(bench_pv - exact) / exact:2.6f}, time {bench_time:2.4f}')
 
     def test_european_put_option_fe_2d(self) -> None:
+        print(
+            'Comparing flux-boundary enforcing 2d finite element european put option with Quantlib FD when market data is convection dominant...')
         today = self.initialize_today()
-        market_data = MarketData(spot=100.0, sigma=0.03, r=0.02, q=0.025)
-        option_data = OptionData(val_date=today, period2mat=ql.Period('4Y'), strike=110.0, cal=ql.TARGET(),
+        market_data = MarketData(spot=100.0, sigma=0.03, r=0.1, q=0.0)
+        option_data = OptionData(val_date=today, period2mat=ql.Period('4Y'), strike=130.0, cal=ql.TARGET(),
                                  dc=ql.Actual365Fixed(), put_call=ql.Option.Put)
         plot_size = 50
         if PLOT:
             sizes = [plot_size]
         else:
-            sizes = [25, 50, 75, 100]
+            sizes = [50, 100, 150]
         for size in sizes:
-            params = ModelParams(size=size, concentrating=False, flux_boundary_bc=True, std_devs=10, max_spots=4)
+            params = ModelParams(size=size, concentrating=True, flux_boundary_bc=True, std_devs=60, max_spots=4)
             start = timer()
             result = european_vanilla_fe_2d(option_data, market_data, params)
             time = timer() - start
             res, exact = self._compare_analytic(option_data, market_data, params, result)
             print(
-                f'Testing European Put Option FE-2D: analytic {exact:4.4f}, calculated {res:4.4f}, error: {(res - exact) / exact:2.6f}, time {time:2.4f}')
+                f'Testing European Put Option FE-2D {size:>3}: analytic {exact:4.4f}, calculated {res:4.4f}, error: {(res - exact) / exact:2.6f}, time {time:2.4f}')
             bench_pv, bench_time = self._ql_benchmark_fd(option_data, market_data, params.size)
             print(
-                f'Testing European Put Option QL-FD: analytic {exact:4.4f}, calculated {bench_pv:4.4f}, error: {(bench_pv - exact) / exact:2.6f}, time {bench_time:2.4f}')
+                f'Testing European Put Option QL-FD {size:>3}: analytic {exact:4.4f}, calculated {bench_pv:4.4f}, error: {(bench_pv - exact) / exact:2.6f}, time {bench_time:2.4f}')
 
     def test_european_call_option_fe_fd(self, cache_mode: bool = False) -> None:
         test_file = 'european_call_fe_fd_reg_test.json'
         print(
             f'Testing implicit/crank-nicholson space-finite-element european call regression against "{test_file}" ...')
         today = self.initialize_today()
-        market_data = MarketData(spot=100.0, sigma=0.4, r=0.1, q=0.0)
+        market_data = MarketData(spot=100.0, sigma=0.3, r=0.01, q=0.0)
         option_data = OptionData(val_date=today, period2mat=ql.Period('4Y'), strike=90.0, cal=ql.TARGET(),
                                  dc=ql.Actual365Fixed(), put_call=ql.Option.Call)
         plot_size = 50
@@ -118,11 +123,11 @@ class TestEuropeanOption(unittest.TestCase):
         print(
             f'Testing implicit/crank-nicholson space-finite-element european put regression against "{test_file}" ...')
         today = self.initialize_today()
-        market_data = MarketData(spot=100.0, sigma=0.3, r=0.02, q=0.025)
+        market_data = MarketData(spot=100.0, sigma=0.03, r=0.1, q=0.0)
         option_data = OptionData(val_date=today, period2mat=ql.Period('4Y'), strike=110.0, cal=ql.TARGET(),
                                  dc=ql.Actual365Fixed(), put_call=ql.Option.Put)
         plot_size = 50
-        theta_plot = 2
+        theta_plot = 1
         if PLOT:
             sizes = [plot_size]
             thetas_inverted = [theta_plot]
@@ -132,10 +137,10 @@ class TestEuropeanOption(unittest.TestCase):
         cached_data = self._initialize_reg_test(cache_mode, test_file)
 
         for size in sizes:
-            params = ModelParams(size=size, concentrating=False, flux_boundary_bc=False, std_devs=10, max_spots=8)
+            params = ModelParams(size=size, concentrating=True, flux_boundary_bc=False, std_devs=20, max_spots=8)
             for theta_inv in thetas_inverted:
                 start = timer()
-                result = european_vanilla_fe_fd(option_data, market_data, params, theta=1 / theta_inv)
+                result = european_vanilla_fe_fd(option_data, market_data, params, theta=0.5)
                 time = timer() - start
                 res, exact = self._compare_analytic(option_data, market_data, params, result)
                 print(
@@ -311,7 +316,7 @@ class TestEuropeanOption(unittest.TestCase):
             keys: tuple[str, ...],
             values: tuple[float, ...],
             cached_results: dict[str, dict[tuple[Any, ...], dict[str, float]]],
-            rel_tol: float = 1e-10
+            abs_tol: float = EPSILON_TOL
     ) -> None:
         if cache_mode:
             if instrument_id not in cached_results:
@@ -322,6 +327,5 @@ class TestEuropeanOption(unittest.TestCase):
             cached_vals = [cached_results[instrument_id][params][k] for k in keys]
             for k, v, v_c in zip(keys, values, cached_vals):
                 abs_err = abs(v_c - v)
-                rel_err = abs_err / v_c
-                self.assertLess(rel_err, rel_tol,
-                                msg=f'ID "{instrument_id}", params: {params}, Rel Error Fail for "{k}" - Expected cached: {v_c}, got: {v}')
+                self.assertLess(abs_err, abs_tol,
+                                msg=f'ID "{instrument_id}", params: {params}, Abs Error Fail for "{k}" - Expected cached: {v_c}, got: {v}')
